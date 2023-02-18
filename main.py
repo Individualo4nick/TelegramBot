@@ -2,10 +2,8 @@ import logging
 import json
 from telegram import Update
 from telegram.ext import filters, ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler
-import MySQLdb
-
 import db
-
+import MySQLdb
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     level=logging.INFO
