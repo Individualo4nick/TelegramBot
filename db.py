@@ -40,14 +40,10 @@ def user_has_family(username):
     x = conn.cursor()
     try:
         x.execute(f'select * from familymember where TelegramId = "{username}"')
-        print(x.fetchall())
         if x.fetchall() is None:
             conn.close()
             return -1
         x.execute(f'select FamilyId from familymember where TelegramId = "{username}"')
-        print(x.fetchall())
-        print("None" not in x.fetchall()[0])
-
         if "None" not in x.fetchall()[0]:
             conn.close()
             return -2
