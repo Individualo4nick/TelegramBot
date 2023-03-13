@@ -1,6 +1,7 @@
-from telegram import Update
+from telegram import Update , InlineKeyboardButton , InlineKeyboardMarkup , KeyboardButton , ReplyKeyboardMarkup
 from telegram.ext import ContextTypes, ConversationHandler
 import db
+import datetime
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -17,14 +18,13 @@ async def reg(update, context):
 
 
 async def get_name(update, context):
-
     db.register(update.message.text, update.message.chat.username)
     await context.bot.send_message(chat_id=update.effective_chat.id, text="Your data saved")
     return ConversationHandler.END
 
 
 async def cancel(update, context):
-    await context.bot.send_message(chat_id=update.effective_chat.id, text="You cancel registration")
+    await context.bot.send_message(chat_id=update.effective_chat.id, text="Action canceled ")
     return ConversationHandler.END
 
 
@@ -76,4 +76,55 @@ async def family_name(update, context):
     await context.bot.send_message(chat_id=update.effective_chat.id,
                                    text="You have successfully raised a family")
     return ConversationHandler.END
+
+purchase_data = []
+async def add_purchase(update, context):
+    purchase_data.append(datetime.date.today())
+    if not db.user_has_family(update.message.chat.username):
+        await context.bot.send_message ( chat_id=update.effective_chat.id ,
+                                         text="You must be in the family to add purchases" )
+        return ConversationHandler.END
+    purchase_types = [
+        KeyboardButton("🚌 Transport"),
+        KeyboardButton("✈ Trips"),
+        KeyboardButton("🛒 Supermarkets"),
+        KeyboardButton("🍴 Restaurants"),
+        KeyboardButton("🎓 Education"),
+        KeyboardButton("👕 Clothes"),
+        KeyboardButton("🏥 Health and beauty"),
+        KeyboardButton("🏄 Hobby"),
+        KeyboardButton("🏠 Communications, Internet, etc.")
+    ]
+    family_id = db.get_family_id(update.message.chat.username)
+    purchase_data.append(update.message.chat.username)
+    purchase_data.append(family_id[0])
+    reply_markup = ReplyKeyboardMarkup(build_menu(purchase_types, 3), one_time_keyboard=True)
+    await context.bot.send_message ( chat_id=update.effective_chat.id ,
+                                     text="Choose purchase type", reply_markup=reply_markup)
+    return 1
+
+async def enter_price(update, context):
+    purchase_data.append(update.message.text[2:])
+    await context.bot.send_message(chat_id=update.effective_chat.id,
+                                   text="Enter purchase price in rubles")
+    return 2
+
+async def save_purchase(update,context):
+    purchase_data.append(int(update.message.text))
+    db.add_purchase(purchase_data)
+    await context.bot.send_message(chat_id=update.effective_chat.id,
+                                   text="Purchase successful added")
+    return ConversationHandler.END
+
+def build_menu(buttons, n_cols,
+               header_buttons=None,
+               footer_buttons=None):
+    menu = [buttons[i:i + n_cols] for i in range(0, len(buttons), n_cols)]
+    if header_buttons:
+        menu.insert(0, [header_buttons])
+    if footer_buttons:
+        menu.append([footer_buttons])
+    return menu
+
+
 

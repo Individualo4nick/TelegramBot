@@ -37,6 +37,15 @@ if __name__ == '__main__':
         },
         fallbacks=[CommandHandler("cancel", handlers.cancel)],
     )
+    conv_add_purchase_handler = ConversationHandler(
+        entry_points=[CommandHandler("addpurchase", handlers.add_purchase)],
+        states={
+            1: [MessageHandler(filters=filters.TEXT, callback=handlers.enter_price)],
+            2: [MessageHandler(filters=filters.TEXT, callback=handlers.save_purchase)]
+        },
+        fallbacks=[CommandHandler("cancel", handlers.cancel)],
+    )
+    add_purchase_handler = CommandHandler('addpurchase', handlers.add_purchase)
     create_family_handler = CommandHandler('create', handlers.create_family)
     registration_handler = CommandHandler("reg", handlers.reg)
     cancel_registration_handler = CommandHandler("cancel", handlers.cancel)
@@ -46,10 +55,20 @@ if __name__ == '__main__':
 
     # Link handlers
     application.add_handler(start_handler)
+
+    # Create family
     application.add_handler(conv_create_family_handler)
     application.add_handler(create_family_handler)
+
+    # User registration
     application.add_handler(conv_registration_handler)
     application.add_handler(registration_handler)
+
+    # Add purchase
+    application.add_handler(conv_add_purchase_handler)
+    application.add_handler(add_purchase_handler)
+
+    # Other handlers
     application.add_handler(cancel_registration_handler)
     application.add_handler(unknown_handler)
 
