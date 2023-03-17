@@ -1,6 +1,7 @@
 import MySQLdb
 import json
 
+
 with open("config.json") as json_data:
     data = json.load(json_data)
 
@@ -19,6 +20,7 @@ def register(user_name, telegram_id):
     except:
         conn.rollback()
     conn.close()
+
 
 def check_family_login(login):
     conn = connect_db()
@@ -67,13 +69,22 @@ def add_family(params, username):
     conn.close()
     return 0
 
+def get_family_id(user_id):
+    conn = connect_db()
+    x = conn.cursor()
+    try:
+        x.execute(f'select FamilyId from familymember where TelegramId="{user_id}" ')
+        return x.fetchall()[0]
+    except:
+        conn.rollback()
+    conn.close()
 
 
 def add_purchase(params):
     conn = connect_db()
     x = conn.cursor()
     try:
-        x.execute(f'insert purchase(Login, Pass, FamilyName) values ("{params[0]}", "{params[1]}", "{params[2]}" )')
+        x.execute(f'insert purchase(BuyDate, MemberId, FamilyId, BuyType, Price) values ("{params[0]}", "{params[1]}", "{params[2]}", "{params[3]}", "{params[4]}" )')
         conn.commit()
     except:
         conn.rollback()
