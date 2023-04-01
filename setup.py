@@ -9,4 +9,8 @@ setup(
     version="0.0.1",
     author="Vlad Vlasov and Vitaly Taibasarov",
     install_requires=required,
+    entry_points='''
+        [console_scripts]
+        financebot=main:cli
+    '''
 )

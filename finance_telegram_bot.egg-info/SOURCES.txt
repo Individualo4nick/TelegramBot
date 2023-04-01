@@ -1,0 +1,13 @@
+README.md
+pyproject.toml
+setup.py
+TelegramBot/__init__.py
+TelegramBot/db.py
+TelegramBot/handlers.py
+TelegramBot/main.py
+finance_telegram_bot.egg-info/PKG-INFO
+finance_telegram_bot.egg-info/SOURCES.txt
+finance_telegram_bot.egg-info/dependency_links.txt
+finance_telegram_bot.egg-info/entry_points.txt
+finance_telegram_bot.egg-info/requires.txt
+finance_telegram_bot.egg-info/top_level.txt
