@@ -1,9 +1,7 @@
 import logging
 import json
-from telegram import Update
-from telegram.ext import filters, ApplicationBuilder, ContextTypes, CommandHandler, MessageHandler, ConversationHandler
-import db
-import MySQLdb
+from telegram.ext import filters, ApplicationBuilder, CommandHandler, MessageHandler, ConversationHandler
+
 import handlers
 
 logging.basicConfig(

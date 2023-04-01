@@ -6,12 +6,21 @@ with open("config.json") as json_data:
     data = json.load(json_data)
 
 def connect_db():
+    """
+    Function for connection to our database
+    :return: database connection
+    """
     return MySQLdb.connect(host=data["ConnectionString"]["host"],
                            user=data["ConnectionString"]["user"],
                            password=data["ConnectionString"]["password"],
                            database=data["ConnectionString"]["database"])
 
 def register(user_name, telegram_id):
+    """
+    Function for user registration
+    :param user_name: how the user will be displayed in the application
+    :param telegram_id: telegram id of user
+    """
     conn = connect_db()
     x = conn.cursor()
     try:
@@ -23,6 +32,11 @@ def register(user_name, telegram_id):
 
 
 def check_family_login(login):
+    """
+    Check for existing family account
+    :param login: special name of family for authifications
+    :return: -1 if family not found, 0 family founded
+    """
     conn = connect_db()
     x = conn.cursor()
     try:
@@ -38,6 +52,11 @@ def check_family_login(login):
 
 
 def user_has_family(username):
+    """
+    Сhecks the user's family status
+    :param username: name of user
+    :return: -1 :
+    """
     conn = connect_db()
     x = conn.cursor()
     try:
@@ -56,6 +75,11 @@ def user_has_family(username):
 
 
 def add_family(params, username):
+    """
+    :param params:
+    :param username:
+    :return:
+    """
     conn = connect_db()
     x = conn.cursor()
     try:
