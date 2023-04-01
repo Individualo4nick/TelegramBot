@@ -11,7 +11,7 @@ logging.basicConfig(
 
 
 if __name__ == '__main__':
-    with open("config.json") as json_data:
+    with open("../config.json") as json_data:
         data = json.load(json_data)
 
     application = ApplicationBuilder().token(data["Token"]).build()

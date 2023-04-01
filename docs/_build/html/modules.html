@@ -14,6 +14,8 @@
     <script src="_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="TelegramBot package" href="TelegramBot.html" />
+    <link rel="prev" title="Welcome to finance-telegram-bot’s documentation!" href="index.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -36,10 +38,34 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="TelegramBot.html">TelegramBot package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="TelegramBot.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="TelegramBot.html#telegrambot-db-module">TelegramBot.db module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="TelegramBot.html#telegrambot-handlers-module">TelegramBot.handlers module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TelegramBot.html#module-TelegramBot.db">TelegramBot.db module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="TelegramBot.html#TelegramBot.db.add_family"><code class="docutils literal notranslate"><span class="pre">add_family()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="TelegramBot.html#TelegramBot.db.add_purchase"><code class="docutils literal notranslate"><span class="pre">add_purchase()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="TelegramBot.html#TelegramBot.db.check_family_login"><code class="docutils literal notranslate"><span class="pre">check_family_login()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="TelegramBot.html#TelegramBot.db.connect_db"><code class="docutils literal notranslate"><span class="pre">connect_db()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="TelegramBot.html#TelegramBot.db.get_family_id"><code class="docutils literal notranslate"><span class="pre">get_family_id()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="TelegramBot.html#TelegramBot.db.register"><code class="docutils literal notranslate"><span class="pre">register()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="TelegramBot.html#TelegramBot.db.user_has_family"><code class="docutils literal notranslate"><span class="pre">user_has_family()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="TelegramBot.html#module-TelegramBot.handlers">TelegramBot.handlers module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="TelegramBot.html#TelegramBot.handlers.add_purchase"><code class="docutils literal notranslate"><span class="pre">add_purchase()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="TelegramBot.html#TelegramBot.handlers.build_menu"><code class="docutils literal notranslate"><span class="pre">build_menu()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="TelegramBot.html#TelegramBot.handlers.cancel"><code class="docutils literal notranslate"><span class="pre">cancel()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="TelegramBot.html#TelegramBot.handlers.create_family"><code class="docutils literal notranslate"><span class="pre">create_family()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="TelegramBot.html#TelegramBot.handlers.enter_price"><code class="docutils literal notranslate"><span class="pre">enter_price()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="TelegramBot.html#TelegramBot.handlers.family_login"><code class="docutils literal notranslate"><span class="pre">family_login()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="TelegramBot.html#TelegramBot.handlers.family_name"><code class="docutils literal notranslate"><span class="pre">family_name()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="TelegramBot.html#TelegramBot.handlers.family_password"><code class="docutils literal notranslate"><span class="pre">family_password()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="TelegramBot.html#TelegramBot.handlers.get_name"><code class="docutils literal notranslate"><span class="pre">get_name()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="TelegramBot.html#TelegramBot.handlers.reg"><code class="docutils literal notranslate"><span class="pre">reg()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="TelegramBot.html#TelegramBot.handlers.save_purchase"><code class="docutils literal notranslate"><span class="pre">save_purchase()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="TelegramBot.html#TelegramBot.handlers.start"><code class="docutils literal notranslate"><span class="pre">start()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="TelegramBot.html#TelegramBot.handlers.unknown"><code class="docutils literal notranslate"><span class="pre">unknown()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="TelegramBot.html#telegrambot-main-module">TelegramBot.main module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="TelegramBot.html#module-contents">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="TelegramBot.html#module-TelegramBot">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="setup.html">setup module</a></li>
@@ -64,11 +90,21 @@
 
 
 <h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Bot</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="TelegramBot.html">TelegramBot package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="setup.html">setup module</a></li>
+</ul>
+</li>
+</ul>
 
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Welcome to finance-telegram-bot’s documentation!</a></li>
+      <li>Next: <a href="TelegramBot.html" title="next chapter">TelegramBot package</a></li>
   </ul></li>
 </ul>
 </div>

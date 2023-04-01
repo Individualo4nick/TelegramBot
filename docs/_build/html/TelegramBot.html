@@ -14,6 +14,8 @@
     <script src="_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="setup module" href="setup.html" />
+    <link rel="prev" title="Bot" href="modules.html" />
    
   <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
@@ -35,17 +37,140 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">¶</a></h2>
 </section>
-<section id="telegrambot-db-module">
-<h2>TelegramBot.db module<a class="headerlink" href="#telegrambot-db-module" title="Permalink to this heading">¶</a></h2>
+<section id="module-TelegramBot.db">
+<span id="telegrambot-db-module"></span><h2>TelegramBot.db module<a class="headerlink" href="#module-TelegramBot.db" title="Permalink to this heading">¶</a></h2>
+<p>This is module for database access</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="TelegramBot.db.add_family">
+<span class="sig-prename descclassname"><span class="pre">TelegramBot.db.</span></span><span class="sig-name descname"><span class="pre">add_family</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">username</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TelegramBot/db.html#add_family"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TelegramBot.db.add_family" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> – </p></li>
+<li><p><strong>username</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="TelegramBot.db.add_purchase">
+<span class="sig-prename descclassname"><span class="pre">TelegramBot.db.</span></span><span class="sig-name descname"><span class="pre">add_purchase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TelegramBot/db.html#add_purchase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TelegramBot.db.add_purchase" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="TelegramBot.db.check_family_login">
+<span class="sig-prename descclassname"><span class="pre">TelegramBot.db.</span></span><span class="sig-name descname"><span class="pre">check_family_login</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">login</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TelegramBot/db.html#check_family_login"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TelegramBot.db.check_family_login" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check for existing family account
+:param login: special name of family for authifications
+:return: -1 if family not found, 0 family founded</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="TelegramBot.db.connect_db">
+<span class="sig-prename descclassname"><span class="pre">TelegramBot.db.</span></span><span class="sig-name descname"><span class="pre">connect_db</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/TelegramBot/db.html#connect_db"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TelegramBot.db.connect_db" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function for connection to our database
+:return: database connection</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="TelegramBot.db.get_family_id">
+<span class="sig-prename descclassname"><span class="pre">TelegramBot.db.</span></span><span class="sig-name descname"><span class="pre">get_family_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TelegramBot/db.html#get_family_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TelegramBot.db.get_family_id" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="TelegramBot.db.register">
+<span class="sig-prename descclassname"><span class="pre">TelegramBot.db.</span></span><span class="sig-name descname"><span class="pre">register</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">telegram_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TelegramBot/db.html#register"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TelegramBot.db.register" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function for user registration
+:param user_name: how the user will be displayed in the application
+:param telegram_id: telegram id of user</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="TelegramBot.db.user_has_family">
+<span class="sig-prename descclassname"><span class="pre">TelegramBot.db.</span></span><span class="sig-name descname"><span class="pre">user_has_family</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TelegramBot/db.html#user_has_family"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TelegramBot.db.user_has_family" title="Permalink to this definition">¶</a></dt>
+<dd><p>Сhecks the user’s family status
+:param username: name of user
+:return: -1 :</p>
+</dd></dl>
+
 </section>
-<section id="telegrambot-handlers-module">
-<h2>TelegramBot.handlers module<a class="headerlink" href="#telegrambot-handlers-module" title="Permalink to this heading">¶</a></h2>
+<section id="module-TelegramBot.handlers">
+<span id="telegrambot-handlers-module"></span><h2>TelegramBot.handlers module<a class="headerlink" href="#module-TelegramBot.handlers" title="Permalink to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="TelegramBot.handlers.add_purchase">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">TelegramBot.handlers.</span></span><span class="sig-name descname"><span class="pre">add_purchase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">update</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TelegramBot/handlers.html#add_purchase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TelegramBot.handlers.add_purchase" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="TelegramBot.handlers.build_menu">
+<span class="sig-prename descclassname"><span class="pre">TelegramBot.handlers.</span></span><span class="sig-name descname"><span class="pre">build_menu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">buttons</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_cols</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header_buttons</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">footer_buttons</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TelegramBot/handlers.html#build_menu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TelegramBot.handlers.build_menu" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="TelegramBot.handlers.cancel">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">TelegramBot.handlers.</span></span><span class="sig-name descname"><span class="pre">cancel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">update</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TelegramBot/handlers.html#cancel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TelegramBot.handlers.cancel" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="TelegramBot.handlers.create_family">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">TelegramBot.handlers.</span></span><span class="sig-name descname"><span class="pre">create_family</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">update</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TelegramBot/handlers.html#create_family"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TelegramBot.handlers.create_family" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="TelegramBot.handlers.enter_price">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">TelegramBot.handlers.</span></span><span class="sig-name descname"><span class="pre">enter_price</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">update</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TelegramBot/handlers.html#enter_price"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TelegramBot.handlers.enter_price" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="TelegramBot.handlers.family_login">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">TelegramBot.handlers.</span></span><span class="sig-name descname"><span class="pre">family_login</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">update</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TelegramBot/handlers.html#family_login"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TelegramBot.handlers.family_login" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="TelegramBot.handlers.family_name">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">TelegramBot.handlers.</span></span><span class="sig-name descname"><span class="pre">family_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">update</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TelegramBot/handlers.html#family_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TelegramBot.handlers.family_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="TelegramBot.handlers.family_password">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">TelegramBot.handlers.</span></span><span class="sig-name descname"><span class="pre">family_password</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">update</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TelegramBot/handlers.html#family_password"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TelegramBot.handlers.family_password" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="TelegramBot.handlers.get_name">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">TelegramBot.handlers.</span></span><span class="sig-name descname"><span class="pre">get_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">update</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TelegramBot/handlers.html#get_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TelegramBot.handlers.get_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="TelegramBot.handlers.reg">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">TelegramBot.handlers.</span></span><span class="sig-name descname"><span class="pre">reg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">update</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TelegramBot/handlers.html#reg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TelegramBot.handlers.reg" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="TelegramBot.handlers.save_purchase">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">TelegramBot.handlers.</span></span><span class="sig-name descname"><span class="pre">save_purchase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">update</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TelegramBot/handlers.html#save_purchase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TelegramBot.handlers.save_purchase" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="TelegramBot.handlers.start">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">TelegramBot.handlers.</span></span><span class="sig-name descname"><span class="pre">start</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">update</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Update</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CallbackContext</span><span class="p"><span class="pre">[</span></span><span class="pre">ExtBot</span><span class="p"><span class="pre">[</span></span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TelegramBot/handlers.html#start"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TelegramBot.handlers.start" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="TelegramBot.handlers.unknown">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">TelegramBot.handlers.</span></span><span class="sig-name descname"><span class="pre">unknown</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">update</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Update</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">CallbackContext</span><span class="p"><span class="pre">[</span></span><span class="pre">ExtBot</span><span class="p"><span class="pre">[</span></span><span class="pre">None</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TelegramBot/handlers.html#unknown"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TelegramBot.handlers.unknown" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </section>
 <section id="telegrambot-main-module">
 <h2>TelegramBot.main module<a class="headerlink" href="#telegrambot-main-module" title="Permalink to this heading">¶</a></h2>
 </section>
-<section id="module-contents">
-<h2>Module contents<a class="headerlink" href="#module-contents" title="Permalink to this heading">¶</a></h2>
+<section id="module-TelegramBot">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-TelegramBot" title="Permalink to this heading">¶</a></h2>
 </section>
 </section>
 
@@ -66,11 +191,23 @@
 
 
 <h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">Bot</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">TelegramBot package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="setup.html">setup module</a></li>
+</ul>
+</li>
+</ul>
 
 <div class="relations">
 <h3>Related Topics</h3>
 <ul>
   <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="modules.html">Bot</a><ul>
+      <li>Previous: <a href="modules.html" title="previous chapter">Bot</a></li>
+      <li>Next: <a href="setup.html" title="next chapter">setup module</a></li>
+  </ul></li>
   </ul></li>
 </ul>
 </div>
