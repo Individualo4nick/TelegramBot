@@ -128,7 +128,13 @@ def build_menu(buttons, n_cols,
         menu.append([footer_buttons])
     return menu
 
-def check_category(spendings_category, spendings_price):
+def data_conversion(spendings_category, spendings_price):
+    """
+    Converts the information from the database into a dictionary
+    :param spendings_category: categories of goods on request in the database
+    :param spendings_price: price of goods on request in the database
+    :return: converted data
+    """
     spendings_price_category={}
     unique_spendings_category = tuple(set(spendings_category))
     for i in range(len(unique_spendings_category)):
@@ -138,6 +144,9 @@ def check_category(spendings_category, spendings_price):
                 spendings_price_category[unique_spendings_category[i][0]] += spendings_price[j][0]
     return spendings_price_category
 async def get_spending_month(update, context):
+    """
+    Getting information about monthly expenses by category and family members
+    """
     result = ''
     now = datetime.datetime.now()
     spendings_member = db.get_month_members(now.month)
@@ -145,10 +154,10 @@ async def get_spending_month(update, context):
     members = {}
     for i in range(len(unique_spendings_member)):
         spendings_price, spendings_category = db.get_spend_member(now.month, unique_spendings_member[i][0])
-        spendings_price_category = check_category(spendings_category, spendings_price)
+        spendings_price_category = data_conversion(spendings_category, spendings_price)
         members[unique_spendings_member[i][0]] = spendings_price_category
     spendings_price, spendings_category = db.get_spend(now.month)
-    spendings_price_category = check_category(spendings_category, spendings_price)
+    spendings_price_category = data_conversion(spendings_category, spendings_price)
     purchase = 'This month you made purchases in the following categories:\n\n'
     result += purchase
     for category in spendings_price_category.keys():
