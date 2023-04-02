@@ -135,17 +135,17 @@ def execute_read_query(connection, query):
     except Error as e:
         print(f"The error '{e}' occurred")
 
-def get_month_members(month):
+def get_month_members(month, family_id):
     """
     Searches information about family members who made purchases in the current month
     :param month: current month
     :return: family members who made purchases in the current month
     """
     conn = connect_db()
-    select_spendings_member = f'select MemberId from purchase where month(BuyDate)="{month}"'
+    select_spendings_member = f'select MemberId from purchase where month(BuyDate)="{month}" and FamilyId="{family_id}"'
     spendings_member = execute_read_query(conn, select_spendings_member)
     return spendings_member
-def get_spend_member(month, member):
+def get_spend_member(month, member, family_id):
     """
     Searches for information about product categories and prices, purchases in the current month of a particular user
     :param month: current month
@@ -153,20 +153,20 @@ def get_spend_member(month, member):
     :return: information about product categories and prices
     """
     conn = connect_db()
-    select_spendings_price = f'select Price from purchase where month(BuyDate)="{month}" and MemberId="{member}"'
-    select_spendings_category = f'select BuyType from purchase where month(BuyDate)="{month}" and MemberId="{member}"'
+    select_spendings_price = f'select Price from purchase where month(BuyDate)="{month}" and MemberId="{member}" and FamilyId="{family_id}"'
+    select_spendings_category = f'select BuyType from purchase where month(BuyDate)="{month}" and MemberId="{member}" and FamilyId="{family_id}"'
     spendings_price = execute_read_query(conn, select_spendings_price)
     spendings_category = execute_read_query(conn, select_spendings_category)
     return spendings_price, spendings_category
-def get_spend(month):
+def get_spend(month, family_id):
     """
     Searches for information about product categories and prices, purchases in the current month
     :param month: current month
     :return: information about product categories and prices
     """
     conn = connect_db()
-    select_spendings_price = f'select Price from purchase where month(BuyDate)="{month}"'
-    select_spendings_category = f'select BuyType from purchase where month(BuyDate)="{month}"'
+    select_spendings_price = f'select Price from purchase where month(BuyDate)="{month}" and FamilyId="{family_id}"'
+    select_spendings_category = f'select BuyType from purchase where month(BuyDate)="{month}" and FamilyId="{family_id}"'
     spendings_price = execute_read_query(conn, select_spendings_price)
     spendings_category = execute_read_query(conn, select_spendings_category)
     return spendings_price, spendings_category
