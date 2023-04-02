@@ -79,6 +79,8 @@ async def family_name(update, context):
 
 purchase_data = []
 async def add_purchase(update, context):
+    global purchase_data
+    purchase_data = []
     purchase_data.append(datetime.date.today())
     if not db.user_has_family(update.message.chat.username):
         await context.bot.send_message ( chat_id=update.effective_chat.id ,
@@ -125,6 +127,43 @@ def build_menu(buttons, n_cols,
     if footer_buttons:
         menu.append([footer_buttons])
     return menu
+
+def check_category(spendings_category, spendings_price):
+    spendings_price_category={}
+    unique_spendings_category = tuple(set(spendings_category))
+    for i in range(len(unique_spendings_category)):
+        spendings_price_category[unique_spendings_category[i][0]] = 0
+        for j in range(len(spendings_price)):
+            if unique_spendings_category[i][0] == spendings_category[j][0]:
+                spendings_price_category[unique_spendings_category[i][0]] += spendings_price[j][0]
+    return spendings_price_category
+async def get_spending_month(update, context):
+    result = ''
+    now = datetime.datetime.now()
+    spendings_member = db.get_month_members(now.month)
+    unique_spendings_member = tuple(set(spendings_member))
+    members = {}
+    for i in range(len(unique_spendings_member)):
+        spendings_price, spendings_category = db.get_spend_member(now.month, unique_spendings_member[i][0])
+        spendings_price_category = check_category(spendings_category, spendings_price)
+        members[unique_spendings_member[i][0]] = spendings_price_category
+    spendings_price, spendings_category = db.get_spend(now.month)
+    spendings_price_category = check_category(spendings_category, spendings_price)
+    purchase = 'This month you made purchases in the following categories:\n\n'
+    result += purchase
+    for category in spendings_price_category.keys():
+        purchase = f'{category}: for the amount of {spendings_price_category[category]} rubles \n\n'
+        result += purchase
+    result += "=====================================================\n\n"
+    for member in members.keys():
+        purchase = f'User {member} made purchases this month in the following categories:\n\n'
+        result += purchase
+        for category in members[member].keys():
+            purchase = f'{category} category for the amount of {members[member][category]} rubles \n \n'
+            result += purchase
+    await context.bot.send_message(chat_id=update.effective_chat.id,
+                                   text=result)
+
 
 
 

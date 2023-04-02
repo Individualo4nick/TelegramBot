@@ -47,6 +47,7 @@ if __name__ == '__main__':
     create_family_handler = CommandHandler('create', handlers.create_family)
     registration_handler = CommandHandler("reg", handlers.reg)
     cancel_registration_handler = CommandHandler("cancel", handlers.cancel)
+    get_month_handler = CommandHandler('getmonth', handlers.get_spending_month)
     unknown_handler = MessageHandler(filters.COMMAND, handlers.unknown)
 
 
@@ -66,8 +67,11 @@ if __name__ == '__main__':
     application.add_handler(conv_add_purchase_handler)
     application.add_handler(add_purchase_handler)
 
+    application.add_handler(get_month_handler)
+
     # Other handlers
     application.add_handler(cancel_registration_handler)
     application.add_handler(unknown_handler)
+
 
     application.run_polling()

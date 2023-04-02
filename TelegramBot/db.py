@@ -1,6 +1,8 @@
 """
  This is module for database access
 """
+from aifc import Error
+
 import MySQLdb
 import json
 
@@ -116,3 +118,33 @@ def add_purchase(params):
     except:
         conn.rollback()
     conn.close()
+
+def execute_read_query(connection, query):
+    cursor = connection.cursor()
+    result = None
+    try:
+        cursor.execute(query)
+        result = cursor.fetchall()
+        return result
+    except Error as e:
+        print(f"The error '{e}' occurred")
+
+def get_month_members(month):
+    conn = connect_db()
+    select_spendings_member = f'select MemberId from purchase where month(BuyDate)="{month}"'
+    spendings_member = execute_read_query(conn, select_spendings_member)
+    return spendings_member
+def get_spend_member(month, member):
+    conn = connect_db()
+    select_spendings_price = f'select Price from purchase where month(BuyDate)="{month}" and MemberId="{member}"'
+    select_spendings_category = f'select BuyType from purchase where month(BuyDate)="{month}" and MemberId="{member}"'
+    spendings_price = execute_read_query(conn, select_spendings_price)
+    spendings_category = execute_read_query(conn, select_spendings_category)
+    return spendings_price, spendings_category
+def get_spend(month):
+    conn = connect_db()
+    select_spendings_price = f'select Price from purchase where month(BuyDate)="{month}"'
+    select_spendings_category = f'select BuyType from purchase where month(BuyDate)="{month}"'
+    spendings_price = execute_read_query(conn, select_spendings_price)
+    spendings_category = execute_read_query(conn, select_spendings_category)
+    return spendings_price, spendings_category
