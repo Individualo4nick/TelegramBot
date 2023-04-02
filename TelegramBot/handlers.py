@@ -149,8 +149,9 @@ async def get_spending_month(update, context):
     """
     result = ''
     now = datetime.datetime.now()
-    family_id=db.get_family_id(update.message.chat.username)[0]
+    family_id = db.get_family_id(update.message.chat.username)
     if family_id:
+        family_id = family_id[0]
         spendings_member = db.get_month_members(now.month, family_id)
         unique_spendings_member = tuple(set(spendings_member))
         members = {}
