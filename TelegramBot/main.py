@@ -47,7 +47,14 @@ if __name__ == '__main__':
     create_family_handler = CommandHandler('create', handlers.create_family)
     registration_handler = CommandHandler("reg", handlers.reg)
     cancel_registration_handler = CommandHandler("cancel", handlers.cancel)
-    get_month_handler = CommandHandler('getmonth', handlers.get_spending_month)
+    conv_get_handler = ConversationHandler(
+        entry_points=[CommandHandler("get", handlers.choose_period)],
+        states={
+            1: [MessageHandler(filters=filters.TEXT, callback=handlers.get_spending)],
+        },
+        fallbacks=[CommandHandler("cancel", handlers.cancel)],
+    )
+    get_handler = CommandHandler('get', handlers.get_spending)
     unknown_handler = MessageHandler(filters.COMMAND, handlers.unknown)
 
 
@@ -67,7 +74,9 @@ if __name__ == '__main__':
     application.add_handler(conv_add_purchase_handler)
     application.add_handler(add_purchase_handler)
 
-    application.add_handler(get_month_handler)
+    # Get spendings
+    application.add_handler(conv_get_handler)
+    application.add_handler(get_handler)
 
     # Other handlers
     application.add_handler(cancel_registration_handler)

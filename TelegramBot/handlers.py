@@ -101,7 +101,7 @@ async def add_purchase(update, context):
     purchase_data.append(update.message.chat.username)
     purchase_data.append(family_id[0])
     reply_markup = ReplyKeyboardMarkup(build_menu(purchase_types, 3), one_time_keyboard=True)
-    await context.bot.send_message ( chat_id=update.effective_chat.id ,
+    await context.bot.send_message (chat_id=update.effective_chat.id ,
                                      text="Choose purchase type", reply_markup=reply_markup)
     return 1
 
@@ -143,39 +143,85 @@ def data_conversion(spendings_category, spendings_price):
             if unique_spendings_category[i][0] == spendings_category[j][0]:
                 spendings_price_category[unique_spendings_category[i][0]] += spendings_price[j][0]
     return spendings_price_category
-async def get_spending_month(update, context):
+
+def get_spending_period(family_id, period):
     """
-    Getting information about monthly expenses by category and family members
+    Getting information about period expenses by category and family members
+    :param family_id: id of family
+    :param period: getting information for the day, week or month
+    :return: the message that the bot will display
     """
     result = ''
-    now = datetime.datetime.now()
+
+    if period == 'Month':
+        now = datetime.datetime.now()
+        now = now.month
+    elif period == 'Week':
+        now = datetime.datetime.today()
+        now = now.isocalendar()[1]
+    elif period == 'Day':
+        now = datetime.datetime.now()
+        now = now.day
+    spendings_member = db.get_period_members(period, now, family_id)
+    unique_spendings_member = tuple(set(spendings_member))
+    members = {}
+    for i in range(len(unique_spendings_member)):
+        spendings_price, spendings_category = db.get_spend_member(period, now, unique_spendings_member[i][0], family_id)
+        spendings_price_category = data_conversion(spendings_category, spendings_price)
+        members[unique_spendings_member[i][0]] = spendings_price_category
+    spendings_price, spendings_category = db.get_spend(period, now, family_id)
+    spendings_price_category = data_conversion(spendings_category, spendings_price)
+    purchase = f'This {period} you made purchases in the following categories:\n\n'
+    result += purchase
+    for category in spendings_price_category.keys():
+        purchase = f'{category}: for the amount of {spendings_price_category[category]} rubles \n\n'
+        result += purchase
+    result += "=====================================================\n\n"
+    for member in members.keys():
+        purchase = f'User {member} made purchases this {period} in the following categories:\n\n'
+        result += purchase
+        for category in members[member].keys():
+            purchase = f'{category} category for the amount of {members[member][category]} rubles \n \n'
+            result += purchase
+    return result
+
+
+async def choose_period(update, context):
+    """
+    Select the period for which you want to display information
+    """
     family_id = db.get_family_id(update.message.chat.username)
     if family_id:
-        family_id = family_id[0]
-        spendings_member = db.get_month_members(now.month, family_id)
-        unique_spendings_member = tuple(set(spendings_member))
-        members = {}
-        for i in range(len(unique_spendings_member)):
-            spendings_price, spendings_category = db.get_spend_member(now.month, unique_spendings_member[i][0], family_id)
-            spendings_price_category = data_conversion(spendings_category, spendings_price)
-            members[unique_spendings_member[i][0]] = spendings_price_category
-        spendings_price, spendings_category = db.get_spend(now.month, family_id)
-        spendings_price_category = data_conversion(spendings_category, spendings_price)
-        purchase = 'This month you made purchases in the following categories:\n\n'
-        result += purchase
-        for category in spendings_price_category.keys():
-            purchase = f'{category}: for the amount of {spendings_price_category[category]} rubles \n\n'
-            result += purchase
-        result += "=====================================================\n\n"
-        for member in members.keys():
-            purchase = f'User {member} made purchases this month in the following categories:\n\n'
-            result += purchase
-            for category in members[member].keys():
-                purchase = f'{category} category for the amount of {members[member][category]} rubles \n \n'
-                result += purchase
+        period_types = [
+            KeyboardButton("Month"),
+            KeyboardButton("Week"),
+            KeyboardButton("Day")
+        ]
+        reply_markup = ReplyKeyboardMarkup(build_menu(period_types, 1), one_time_keyboard=True)
         await context.bot.send_message(chat_id=update.effective_chat.id,
-                                       text=result)
+                                       text="Choose period", reply_markup=reply_markup)
+        return 1
     else:
         result = "You are not a member of the family. Add to or start a family."
         await context.bot.send_message(chat_id=update.effective_chat.id,
                                        text=result)
+        return -1
+
+async def get_spending(update, context):
+    """
+    Getting information for a certain period and outputting it
+    """
+    family_id = db.get_family_id(update.message.chat.username)[0]
+    if update.message.text == 'Month':
+        result = get_spending_period(family_id, update.message.text)
+        await context.bot.send_message(chat_id=update.effective_chat.id,
+                                       text=result)
+    if update.message.text == 'Week':
+        result = get_spending_period(family_id, update.message.text)
+        await context.bot.send_message(chat_id=update.effective_chat.id,
+                                       text=result)
+    if update.message.text == 'Day':
+        result = get_spending_period(family_id, update.message.text)
+        await context.bot.send_message(chat_id=update.effective_chat.id,
+                                       text=result)
+    return ConversationHandler.END
