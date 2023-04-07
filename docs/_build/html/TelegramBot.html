@@ -77,9 +77,48 @@
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="TelegramBot.db.execute_read_query">
+<span class="sig-prename descclassname"><span class="pre">TelegramBot.db.</span></span><span class="sig-name descname"><span class="pre">execute_read_query</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">query</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TelegramBot/db.html#execute_read_query"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TelegramBot.db.execute_read_query" title="Permalink to this definition">¶</a></dt>
+<dd><p>Executes queries to find data in the database
+:param connection: connection with db
+:param query: database query
+:return: result of query</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="TelegramBot.db.get_family_id">
 <span class="sig-prename descclassname"><span class="pre">TelegramBot.db.</span></span><span class="sig-name descname"><span class="pre">get_family_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">user_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TelegramBot/db.html#get_family_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TelegramBot.db.get_family_id" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="TelegramBot.db.get_period_members">
+<span class="sig-prename descclassname"><span class="pre">TelegramBot.db.</span></span><span class="sig-name descname"><span class="pre">get_period_members</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">period_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">period</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">family_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TelegramBot/db.html#get_period_members"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TelegramBot.db.get_period_members" title="Permalink to this definition">¶</a></dt>
+<dd><p>Searches information about family members who made purchases in the current month
+:param period_name: the period for which we want to get information: day, week or month
+:param period: current day, week or month
+:param family_id: id current family
+:return: family members who made purchases in the current month</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="TelegramBot.db.get_spend">
+<span class="sig-prename descclassname"><span class="pre">TelegramBot.db.</span></span><span class="sig-name descname"><span class="pre">get_spend</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">period_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">period</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">family_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TelegramBot/db.html#get_spend"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TelegramBot.db.get_spend" title="Permalink to this definition">¶</a></dt>
+<dd><p>Searches for information about product categories and prices, purchases in the current period
+:param period_name: the period for which we want to get information: day, week or month
+:param period: current day, week or month
+:param family_id: id current family
+:return: information about product categories and prices</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="TelegramBot.db.get_spend_member">
+<span class="sig-prename descclassname"><span class="pre">TelegramBot.db.</span></span><span class="sig-name descname"><span class="pre">get_spend_member</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">period_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">period</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">member</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">family_id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/TelegramBot/db.html#get_spend_member"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#TelegramBot.db.get_spend_member" title="Permalink to this definition">¶</a></dt>
+<dd><p>Searches for information about product categories and prices, purchases in the current period of a particular user
+:param period_name: the period for which we want to get information: day, week or month
+:param period: current day, week or month
+:param family_id: id current family
+:return: information about product categories and prices</p>
+</dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="TelegramBot.db.register">

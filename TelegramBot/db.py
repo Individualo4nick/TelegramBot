@@ -46,8 +46,8 @@ def check_family_login(login):
     x = conn.cursor()
     try:
         x.execute(f'select * from family where Login = "{login}"')
-        print(x.fetchall())
-        if x.fetchall() is None:
+        result = x.fetchall()
+        if len(result) != 0:
             conn.close()
             return -1
     except:
@@ -60,19 +60,16 @@ def user_has_family(username):
     """
     Сhecks the user's family status
     :param username: name of user
-    :return: -1 :
+    :return: -1 : user has family, 0 : user without family
     """
     conn = connect_db()
     x = conn.cursor()
     try:
         x.execute(f'select * from familymember where TelegramId = "{username}"')
-        if x.fetchall() is None:
+        result = x.fetchall()
+        if not x.fetchall()[3] is None:
             conn.close()
             return -1
-        x.execute(f'select FamilyId from familymember where TelegramId = "{username}"')
-        if "None" not in x.fetchall()[0]:
-            conn.close()
-            return -2
     except:
         conn.rollback()
     conn.close()
@@ -81,15 +78,15 @@ def user_has_family(username):
 
 def add_family(params, username):
     """
-    :param params:
-    :param username:
+    :param params: FamilyInfo object
+    :param username: telegram id of user
     :return:
     """
     conn = connect_db()
     x = conn.cursor()
     try:
 
-        x.execute(f'insert family(Login, Pass, FamilyName) values ("{params[0]}", "{params[1]}", "{params[2]}" )')
+        x.execute(f'insert family(Login, Pass, FamilyName) values ("{params.login}", "{params.password}", "{params.family_name}" )')
         conn.commit()
         x.execute(f'update familymember set FamilyId = (select Id from family where Login = "{params[0]}") where TelegramId = "{username}"')
         conn.commit()

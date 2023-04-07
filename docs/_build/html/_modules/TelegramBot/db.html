@@ -33,6 +33,8 @@
 <span></span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd"> This is module for database access</span>
 <span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">aifc</span> <span class="kn">import</span> <span class="n">Error</span>
+
 <span class="kn">import</span> <span class="nn">MySQLdb</span>
 <span class="kn">import</span> <span class="nn">json</span>
 
@@ -148,6 +150,63 @@
     <span class="k">except</span><span class="p">:</span>
         <span class="n">conn</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
     <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="execute_read_query"><a class="viewcode-back" href="../../TelegramBot.html#TelegramBot.db.execute_read_query">[docs]</a><span class="k">def</span> <span class="nf">execute_read_query</span><span class="p">(</span><span class="n">connection</span><span class="p">,</span> <span class="n">query</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Executes queries to find data in the database</span>
+<span class="sd">    :param connection: connection with db</span>
+<span class="sd">    :param query: database query</span>
+<span class="sd">    :return: result of query</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cursor</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">result</span>
+    <span class="k">except</span> <span class="n">Error</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The error &#39;</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&#39; occurred&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="get_period_members"><a class="viewcode-back" href="../../TelegramBot.html#TelegramBot.db.get_period_members">[docs]</a><span class="k">def</span> <span class="nf">get_period_members</span><span class="p">(</span><span class="n">period_name</span><span class="p">,</span> <span class="n">period</span><span class="p">,</span> <span class="n">family_id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Searches information about family members who made purchases in the current month</span>
+<span class="sd">    :param period_name: the period for which we want to get information: day, week or month</span>
+<span class="sd">    :param period: current day, week or month</span>
+<span class="sd">    :param family_id: id current family</span>
+<span class="sd">    :return: family members who made purchases in the current month</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">conn</span> <span class="o">=</span> <span class="n">connect_db</span><span class="p">()</span>
+    <span class="n">select_spendings_member</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;select MemberId from purchase where </span><span class="si">{</span><span class="n">period_name</span><span class="si">}</span><span class="s1">(BuyDate)=&quot;</span><span class="si">{</span><span class="n">period</span><span class="si">}</span><span class="s1">&quot; and FamilyId=&quot;</span><span class="si">{</span><span class="n">family_id</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
+    <span class="n">spendings_member</span> <span class="o">=</span> <span class="n">execute_read_query</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">select_spendings_member</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">spendings_member</span></div>
+<div class="viewcode-block" id="get_spend_member"><a class="viewcode-back" href="../../TelegramBot.html#TelegramBot.db.get_spend_member">[docs]</a><span class="k">def</span> <span class="nf">get_spend_member</span><span class="p">(</span><span class="n">period_name</span><span class="p">,</span> <span class="n">period</span><span class="p">,</span> <span class="n">member</span><span class="p">,</span> <span class="n">family_id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Searches for information about product categories and prices, purchases in the current period of a particular user</span>
+<span class="sd">    :param period_name: the period for which we want to get information: day, week or month</span>
+<span class="sd">    :param period: current day, week or month</span>
+<span class="sd">    :param family_id: id current family</span>
+<span class="sd">    :return: information about product categories and prices</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">conn</span> <span class="o">=</span> <span class="n">connect_db</span><span class="p">()</span>
+    <span class="n">select_spendings_price</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;select Price from purchase where </span><span class="si">{</span><span class="n">period_name</span><span class="si">}</span><span class="s1">(BuyDate)=&quot;</span><span class="si">{</span><span class="n">period</span><span class="si">}</span><span class="s1">&quot; and MemberId=&quot;</span><span class="si">{</span><span class="n">member</span><span class="si">}</span><span class="s1">&quot; and FamilyId=&quot;</span><span class="si">{</span><span class="n">family_id</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
+    <span class="n">select_spendings_category</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;select BuyType from purchase where </span><span class="si">{</span><span class="n">period_name</span><span class="si">}</span><span class="s1">(BuyDate)=&quot;</span><span class="si">{</span><span class="n">period</span><span class="si">}</span><span class="s1">&quot; and MemberId=&quot;</span><span class="si">{</span><span class="n">member</span><span class="si">}</span><span class="s1">&quot; and FamilyId=&quot;</span><span class="si">{</span><span class="n">family_id</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
+    <span class="n">spendings_price</span> <span class="o">=</span> <span class="n">execute_read_query</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">select_spendings_price</span><span class="p">)</span>
+    <span class="n">spendings_category</span> <span class="o">=</span> <span class="n">execute_read_query</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">select_spendings_category</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">spendings_price</span><span class="p">,</span> <span class="n">spendings_category</span></div>
+<div class="viewcode-block" id="get_spend"><a class="viewcode-back" href="../../TelegramBot.html#TelegramBot.db.get_spend">[docs]</a><span class="k">def</span> <span class="nf">get_spend</span><span class="p">(</span><span class="n">period_name</span><span class="p">,</span> <span class="n">period</span><span class="p">,</span> <span class="n">family_id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Searches for information about product categories and prices, purchases in the current period</span>
+<span class="sd">    :param period_name: the period for which we want to get information: day, week or month</span>
+<span class="sd">    :param period: current day, week or month</span>
+<span class="sd">    :param family_id: id current family</span>
+<span class="sd">    :return: information about product categories and prices</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">conn</span> <span class="o">=</span> <span class="n">connect_db</span><span class="p">()</span>
+    <span class="n">select_spendings_price</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;select Price from purchase where </span><span class="si">{</span><span class="n">period_name</span><span class="si">}</span><span class="s1">(BuyDate)=&quot;</span><span class="si">{</span><span class="n">period</span><span class="si">}</span><span class="s1">&quot; and FamilyId=&quot;</span><span class="si">{</span><span class="n">family_id</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
+    <span class="n">select_spendings_category</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;select BuyType from purchase where </span><span class="si">{</span><span class="n">period_name</span><span class="si">}</span><span class="s1">(BuyDate)=&quot;</span><span class="si">{</span><span class="n">period</span><span class="si">}</span><span class="s1">&quot; and FamilyId=&quot;</span><span class="si">{</span><span class="n">family_id</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
+    <span class="n">spendings_price</span> <span class="o">=</span> <span class="n">execute_read_query</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">select_spendings_price</span><span class="p">)</span>
+    <span class="n">spendings_category</span> <span class="o">=</span> <span class="n">execute_read_query</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">select_spendings_category</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">spendings_price</span><span class="p">,</span> <span class="n">spendings_category</span></div>
 </pre></div>
 
           </div>
