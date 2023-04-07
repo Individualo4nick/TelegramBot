@@ -78,6 +78,7 @@ def user_has_family(username):
 
 def add_family(params, username):
     """
+    Add family info to database
     :param params: FamilyInfo object
     :param username: telegram id of user
     :return:
@@ -88,7 +89,7 @@ def add_family(params, username):
 
         x.execute(f'insert family(Login, Pass, FamilyName) values ("{params.login}", "{params.password}", "{params.family_name}" )')
         conn.commit()
-        x.execute(f'update familymember set FamilyId = (select Id from family where Login = "{params[0]}") where TelegramId = "{username}"')
+        x.execute(f'update familymember set FamilyId = (select Id from family where Login = "{params.login}") where TelegramId = "{username}"')
         conn.commit()
     except:
         conn.rollback()
@@ -96,6 +97,11 @@ def add_family(params, username):
     return 0
 
 def get_family_id(user_id):
+    """
+    Search family id by user telegram id
+    :param user_id: telegram id of user
+    :return:
+    """
     conn = connect_db()
     x = conn.cursor()
     try:
@@ -105,12 +111,16 @@ def get_family_id(user_id):
         conn.rollback()
     conn.close()
 
-
 def add_purchase(params):
+    """
+    Method to add purchase in database
+    :param params: PurchaseData object
+    :return:
+    """
     conn = connect_db()
     x = conn.cursor()
     try:
-        x.execute(f'insert purchase(BuyDate, MemberId, FamilyId, BuyType, Price) values ("{params[0]}", "{params[1]}", "{params[2]}", "{params[3]}", "{params[4]}" )')
+        x.execute(f'insert purchase(BuyDate, MemberId, FamilyId, BuyType, Price) values ("{params.buy_date}", "{params.member_id}", "{params.family_id}", "{params.buy_type}", "{params.price}" )')
         conn.commit()
     except:
         conn.rollback()

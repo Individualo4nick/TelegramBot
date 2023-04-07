@@ -1,3 +1,6 @@
+"""
+Module for command handlers
+"""
 from telegram import Update, KeyboardButton , ReplyKeyboardMarkup
 from telegram.ext import ContextTypes, ConversationHandler
 import db
@@ -9,36 +12,59 @@ class FamilyInfo:
         self.password = ""
         self.family_name = ""
 
+class PurchaseData:
+    def __init__(self):
+        self.price = -1
+        self.buy_type = ""
+        self.buy_date = ""
+        self.member_id = -1
+        self.family_id = -1
+
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """
+    Start command for testing
+    """
     await context.bot.send_message(chat_id=update.effective_chat.id, text="I'm a bot, please talk to me!")
 
 
 async def unknown(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """
+    Handler for unknown commands
+    """
     await context.bot.send_message(chat_id=update.effective_chat.id, text="Sorry, i didn't understand that command")
 
 
 async def reg(update, context):
+    """
+    Handler for user registration
+    """
     await context.bot.send_message(chat_id=update.effective_chat.id, text="What is your name?")
     return 1
 
 
 async def get_name(update, context):
+    """
+    Handler for getting user name
+    """
     db.register(update.message.text, update.message.chat.username)
     await context.bot.send_message(chat_id=update.effective_chat.id, text="Your data saved")
     return ConversationHandler.END
 
 
 async def cancel(update, context):
+    """
+    Hadler to end the conversation
+    """
     await context.bot.send_message(chat_id=update.effective_chat.id, text="Action canceled ")
     return ConversationHandler.END
 
 
 
-
-family_info = []
-
-
 async def create_family(update, context):
+    """
+    Handler to create family
+    """
     context.user_data["family"] = FamilyInfo()
     user_has_family = db.user_has_family(update.message.chat.username)
     if user_has_family == -1:
@@ -49,10 +75,10 @@ async def create_family(update, context):
 
 
 async def family_login(update, context):
-    print("im in login")
+    """
+    Handler to get family login
+    """
     result = db.check_family_login(update.message.text)
-
-
     # Family with this id exist
     if result == -1:
         await context.bot.send_message(chat_id=update.effective_chat.id, text="Family with such login exists. Enter login again")
@@ -64,6 +90,9 @@ async def family_login(update, context):
 
 
 async def family_password(update, context):
+    """
+       Handler to get family password
+    """
     password = update.message.text
     if len(password) > 8 and ("".join(filter(str.isdigit, password)) != ""):
         await context.bot.send_message(chat_id=update.effective_chat.id, text="We save your password. Enter your family name")
@@ -75,6 +104,9 @@ async def family_password(update, context):
 
 
 async def family_name(update, context):
+    """
+       Handler to get family name
+    """
     name = update.message.text
     context.user_data["family"].family_name = name
     db.add_family(context.user_data["family"], update.message.chat.username)
@@ -82,12 +114,13 @@ async def family_name(update, context):
                                    text="You have successfully raised a family")
     return ConversationHandler.END
 
-purchase_data = []
 async def add_purchase(update, context):
-    global purchase_data
-    purchase_data = []
-    purchase_data.append(datetime.date.today())
-    if not db.user_has_family(update.message.chat.username):
+    """
+       Handler to add purchase
+    """
+    context.user_data["purchase"] = PurchaseData()
+    context.user_data["purchase"].buy_date =  datetime.date.today()
+    if db.user_has_family(update.message.chat.username) == -1:
         await context.bot.send_message ( chat_id=update.effective_chat.id ,
                                          text="You must be in the family to add purchases" )
         return ConversationHandler.END
@@ -103,22 +136,28 @@ async def add_purchase(update, context):
         KeyboardButton("🏠 Communications, Internet, etc.")
     ]
     family_id = db.get_family_id(update.message.chat.username)
-    purchase_data.append(update.message.chat.username)
-    purchase_data.append(family_id[0])
+    context.user_data["purchase"].member_id = update.message.chat.username
+    context.user_data["purchase"].family_id = family_id[0]
     reply_markup = ReplyKeyboardMarkup(build_menu(purchase_types, 3), one_time_keyboard=True)
     await context.bot.send_message (chat_id=update.effective_chat.id ,
                                      text="Choose purchase type", reply_markup=reply_markup)
     return 1
 
 async def enter_price(update, context):
-    purchase_data.append(update.message.text[2:])
+    """
+       Handler to get purchase price
+    """
+    context.user_data["purchase"].buy_type = update.message.text[2:]
     await context.bot.send_message(chat_id=update.effective_chat.id,
                                    text="Enter purchase price in rubles")
     return 2
 
 async def save_purchase(update,context):
-    purchase_data.append(int(update.message.text))
-    db.add_purchase(purchase_data)
+    """
+        Handler to save purchase
+    """
+    context.user_data["purchase"].price = int(update.message.text)
+    db.add_purchase(context.user_data["purchase"])
     await context.bot.send_message(chat_id=update.effective_chat.id,
                                    text="Purchase successful added")
     return ConversationHandler.END
@@ -126,6 +165,14 @@ async def save_purchase(update,context):
 def build_menu(buttons, n_cols,
                header_buttons=None,
                footer_buttons=None):
+    """
+    Function to create button menu
+    :param buttons: massive of string with buttons text
+    :param n_cols: count of columns
+    :param header_buttons:
+    :param footer_buttons:
+    :return:
+    """
     menu = [buttons[i:i + n_cols] for i in range(0, len(buttons), n_cols)]
     if header_buttons:
         menu.insert(0, [header_buttons])
