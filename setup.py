@@ -10,7 +10,7 @@ setup(
     author="Vlad Vlasov and Vitaly Taybasarov",
     install_requires=required,
     entry_points='''
-        [console_scripts]
-        financebot=main:cli
+        ‘console_scripts’: [‘financebot = TelegramBot.main:main’,
+        ]
     '''
 )

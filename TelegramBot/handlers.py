@@ -312,3 +312,15 @@ async def family_password_to_enter(update, context):
     else:
         await context.bot.send_message(chat_id=update.effective_chat.id, text="Invalid login or password")
     return ConversationHandler.END
+
+async def leave_from_family(update, context):
+    """
+    Handler to leave from family
+    """
+    username = update.message.chat.username
+
+    result = db.leave_family(username)
+    if result :
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="You successful leave from family")
+    else:
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="You are not a member of the family, therefore you cannot leave it")

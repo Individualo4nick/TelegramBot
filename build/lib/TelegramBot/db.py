@@ -1,6 +1,8 @@
 """
  This is module for database access
 """
+from aifc import Error
+
 import MySQLdb
 import json
 
@@ -44,8 +46,8 @@ def check_family_login(login):
     x = conn.cursor()
     try:
         x.execute(f'select * from family where Login = "{login}"')
-        print(x.fetchall())
-        if x.fetchall() is None:
+        result = x.fetchall()
+        if len(result) != 0:
             conn.close()
             return -1
     except:
@@ -58,38 +60,36 @@ def user_has_family(username):
     """
     Сhecks the user's family status
     :param username: name of user
-    :return: -1 :
+    :return: -1 : user has family, 0 : user without family
     """
     conn = connect_db()
     x = conn.cursor()
     try:
         x.execute(f'select * from familymember where TelegramId = "{username}"')
-        if x.fetchall() is None:
+        result = x.fetchall()
+        if result[3] is None:
             conn.close()
-            return -1
-        x.execute(f'select FamilyId from familymember where TelegramId = "{username}"')
-        if "None" not in x.fetchall()[0]:
-            conn.close()
-            return -2
+            return 0
     except:
         conn.rollback()
     conn.close()
-    return 0
+    return -1
 
 
 def add_family(params, username):
     """
-    :param params:
-    :param username:
+    Add family info to database
+    :param params: FamilyInfo object
+    :param username: telegram id of user
     :return:
     """
     conn = connect_db()
     x = conn.cursor()
     try:
 
-        x.execute(f'insert family(Login, Pass, FamilyName) values ("{params[0]}", "{params[1]}", "{params[2]}" )')
+        x.execute(f'insert family(Login, Pass, FamilyName) values ("{params.login}", "{params.password}", "{params.family_name}" )')
         conn.commit()
-        x.execute(f'update familymember set FamilyId = (select Id from family where Login = "{params[0]}") where TelegramId = "{username}"')
+        x.execute(f'update familymember set FamilyId = (select Id from family where Login = "{params.login}") where TelegramId = "{username}"')
         conn.commit()
     except:
         conn.rollback()
@@ -97,6 +97,11 @@ def add_family(params, username):
     return 0
 
 def get_family_id(user_id):
+    """
+    Search family id by user telegram id
+    :param user_id: telegram id of user
+    :return:
+    """
     conn = connect_db()
     x = conn.cursor()
     try:
@@ -106,13 +111,120 @@ def get_family_id(user_id):
         conn.rollback()
     conn.close()
 
-
 def add_purchase(params):
+    """
+    Method to add purchase in database
+    :param params: PurchaseData object
+    :return:
+    """
     conn = connect_db()
     x = conn.cursor()
     try:
-        x.execute(f'insert purchase(BuyDate, MemberId, FamilyId, BuyType, Price) values ("{params[0]}", "{params[1]}", "{params[2]}", "{params[3]}", "{params[4]}" )')
+        x.execute(f'insert purchase(BuyDate, MemberId, FamilyId, BuyType, Price) values ("{params.buy_date}", "{params.member_id}", "{params.family_id}", "{params.buy_type}", "{params.price}" )')
         conn.commit()
     except:
         conn.rollback()
     conn.close()
+
+def execute_read_query(connection, query):
+    """
+    Executes queries to find data in the database
+    :param connection: connection with db
+    :param query: database query
+    :return: result of query
+    """
+    cursor = connection.cursor()
+    result = None
+    try:
+        cursor.execute(query)
+        result = cursor.fetchall()
+        return result
+    except Error as e:
+        print(f"The error '{e}' occurred")
+
+def get_period_members(period_name, period, family_id):
+    """
+    Searches information about family members who made purchases in the current month
+    :param period_name: the period for which we want to get information: day, week or month
+    :param period: current day, week or month
+    :param family_id: id current family
+    :return: family members who made purchases in the current month
+    """
+    conn = connect_db()
+    select_spendings_member = f'select MemberId from purchase where {period_name}(BuyDate)="{period}" and FamilyId="{family_id}"'
+    spendings_member = execute_read_query(conn, select_spendings_member)
+    return spendings_member
+def get_spend_member(period_name, period, member, family_id):
+    """
+    Searches for information about product categories and prices, purchases in the current period of a particular user
+    :param period_name: the period for which we want to get information: day, week or month
+    :param period: current day, week or month
+    :param family_id: id current family
+    :return: information about product categories and prices
+    """
+    conn = connect_db()
+    select_spendings_price = f'select Price from purchase where {period_name}(BuyDate)="{period}" and MemberId="{member}" and FamilyId="{family_id}"'
+    select_spendings_category = f'select BuyType from purchase where {period_name}(BuyDate)="{period}" and MemberId="{member}" and FamilyId="{family_id}"'
+    spendings_price = execute_read_query(conn, select_spendings_price)
+    spendings_category = execute_read_query(conn, select_spendings_category)
+    return spendings_price, spendings_category
+def get_spend(period_name, period, family_id):
+    """
+    Searches for information about product categories and prices, purchases in the current period
+    :param period_name: the period for which we want to get information: day, week or month
+    :param period: current day, week or month
+    :param family_id: id current family
+    :return: information about product categories and prices
+    """
+    conn = connect_db()
+    select_spendings_price = f'select Price from purchase where {period_name}(BuyDate)="{period}" and FamilyId="{family_id}"'
+    select_spendings_category = f'select BuyType from purchase where {period_name}(BuyDate)="{period}" and FamilyId="{family_id}"'
+    spendings_price = execute_read_query(conn, select_spendings_price)
+    spendings_category = execute_read_query(conn, select_spendings_category)
+    return spendings_price, spendings_category
+
+
+def check_family_data_to_enter(family_data, username):
+    """
+    Check family data from user
+    """
+    conn = connect_db()
+    x = conn.cursor()
+    try:
+        family_id = x.execute(f'select Id from family where Login="{family_data.login}" and Pass="{family_data.password}" ')
+        if family_id is None:
+            return False
+        else:
+            x.execute(
+                f'update familymember set FamilyId = (select Id from family where Login="{family_data.login}" and Pass="{family_data.password}" ) where TelegramId = "{username}"')
+            conn.commit()
+            return True
+    except Error as err:
+        conn.rollback()
+    conn.close()
+    return False
+
+
+def leave_family(username):
+    """
+    Delete foreign key about family
+    :param username:
+    :return:
+    """
+    conn = connect_db()
+    x = conn.cursor()
+    try:
+        family_id = x.execute(
+            f'select FamilyId from familymember where TelegramId="{username}"')
+        if family_id is None:
+            return False
+        else:
+            none = None
+            x.execute(
+                f'update familymember set FamilyId = {none} where TelegramId = "{username}"')
+            conn.commit()
+            return True
+    except Error as err:
+        conn.rollback()
+    conn.close()
+    return False

@@ -7,7 +7,7 @@ import MySQLdb
 import json
 
 
-with open("../config.json") as json_data:
+with open("./config.json") as json_data:
     data = json.load(json_data)
 
 def connect_db():
@@ -197,6 +197,31 @@ def check_family_data_to_enter(family_data, username):
         else:
             x.execute(
                 f'update familymember set FamilyId = (select Id from family where Login="{family_data.login}" and Pass="{family_data.password}" ) where TelegramId = "{username}"')
+            conn.commit()
+            return True
+    except Error as err:
+        conn.rollback()
+    conn.close()
+    return False
+
+
+def leave_family(username):
+    """
+    Delete foreign key about family
+    :param username:
+    :return:
+    """
+    conn = connect_db()
+    x = conn.cursor()
+    try:
+        family_id = x.execute(
+            f'select FamilyId from familymember where TelegramId="{username}"')
+        if family_id is None:
+            return False
+        else:
+            none = None
+            x.execute(
+                f'update familymember set FamilyId = {none} where TelegramId = "{username}"')
             conn.commit()
             return True
     except Error as err:

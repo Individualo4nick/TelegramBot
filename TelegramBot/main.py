@@ -11,7 +11,7 @@ logging.basicConfig(
 
 
 if __name__ == '__main__':
-    with open("../config.json") as json_data:
+    with open("./config.json") as json_data:
         data = json.load(json_data)
 
     application = ApplicationBuilder().token(data["Token"]).build()
@@ -51,6 +51,7 @@ if __name__ == '__main__':
         },
         fallbacks=[CommandHandler("cancel", handlers.cancel)],
     )
+    leave_family_handler = CommandHandler("leave", handlers.leave_from_family)
     login_family_handler = CommandHandler('login', handlers.login_to_family)
     add_purchase_handler = CommandHandler('addpurchase', handlers.add_purchase)
     create_family_handler = CommandHandler('create', handlers.create_family)
@@ -89,6 +90,8 @@ if __name__ == '__main__':
     # Login to family
     application.add_handler(conv_login_family_handler)
     application.add_handler(login_family_handler)
+    # Leave
+    application.add_handler(leave_family_handler)
     # Other handlers
     application.add_handler(cancel_registration_handler)
     application.add_handler(unknown_handler)
