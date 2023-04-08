@@ -8,7 +8,7 @@ This application will help you and your family to effectively monitor their fina
    ```
 2. Install dependencies
     ```cmd
-   python setup.py install
+   python install -r requirements.txt
    ```
 3. Database connection. Create config.json:
     ```json
@@ -25,7 +25,7 @@ This application will help you and your family to effectively monitor their fina
    ```
 4. Run the bot
     ```cmd
-    financebot
+    python .\TelegramBot\main.py
     ```
 5. Generate docs (html):
    ```cmd
