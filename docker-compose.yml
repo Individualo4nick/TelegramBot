@@ -1,0 +1,26 @@
+version: "3.5"
+
+services:
+  bot:
+    build: .
+    container_name: finance_bot
+    command: python ./TelegramBot/main.py
+    ports:
+      - 80:80
+    volumes:
+      - ./:/app
+    depends_on:
+      - mysql
+  mysql:
+    restart: always
+    image: mysql
+    container_name: my_sql
+    environment:
+      MYSQL_ROOT_PASSWORD: 'Vladik_1'
+      MYSQL_USER: 'user'
+      MYSQL_PASS: 'Vladik_1'
+      volumes:
+        -mysql:/var/lib/mysql
+
+
+
