@@ -67,13 +67,13 @@ def user_has_family(username):
     try:
         x.execute(f'select * from familymember where TelegramId = "{username}"')
         result = x.fetchall()
-        if not x.fetchall()[3] is None:
+        if result[3] is None:
             conn.close()
-            return -1
+            return 0
     except:
         conn.rollback()
     conn.close()
-    return 0
+    return -1
 
 
 def add_family(params, username):
@@ -182,3 +182,24 @@ def get_spend(period_name, period, family_id):
     spendings_price = execute_read_query(conn, select_spendings_price)
     spendings_category = execute_read_query(conn, select_spendings_category)
     return spendings_price, spendings_category
+
+
+def check_family_data_to_enter(family_data, username):
+    """
+    Check family data from user
+    """
+    conn = connect_db()
+    x = conn.cursor()
+    try:
+        family_id = x.execute(f'select Id from family where Login="{family_data.login}" and Pass="{family_data.password}" ')
+        if family_id is None:
+            return False
+        else:
+            x.execute(
+                f'update familymember set FamilyId = (select Id from family where Login="{family_data.login}" and Pass="{family_data.password}" ) where TelegramId = "{username}"')
+            conn.commit()
+            return True
+    except Error as err:
+        conn.rollback()
+    conn.close()
+    return False

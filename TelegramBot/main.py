@@ -35,6 +35,14 @@ if __name__ == '__main__':
         },
         fallbacks=[CommandHandler("cancel", handlers.cancel)],
     )
+    conv_login_family_handler = ConversationHandler(
+        entry_points=[CommandHandler("login", handlers.login_to_family)],
+        states={
+            1: [MessageHandler(filters=filters.TEXT, callback=handlers.family_login_to_enter)],
+            2: [MessageHandler(filters=filters.TEXT, callback=handlers.family_password_to_enter)]
+        },
+        fallbacks = [CommandHandler("cancel", handlers.cancel)],
+    )
     conv_add_purchase_handler = ConversationHandler(
         entry_points=[CommandHandler("addpurchase", handlers.add_purchase)],
         states={
@@ -43,6 +51,7 @@ if __name__ == '__main__':
         },
         fallbacks=[CommandHandler("cancel", handlers.cancel)],
     )
+    login_family_handler = CommandHandler('login', handlers.login_to_family)
     add_purchase_handler = CommandHandler('addpurchase', handlers.add_purchase)
     create_family_handler = CommandHandler('create', handlers.create_family)
     registration_handler = CommandHandler("reg", handlers.reg)
@@ -65,7 +74,6 @@ if __name__ == '__main__':
     # Create family
     application.add_handler(conv_create_family_handler)
     application.add_handler(create_family_handler)
-
     # User registration
     application.add_handler(conv_registration_handler)
     application.add_handler(registration_handler)
@@ -78,6 +86,9 @@ if __name__ == '__main__':
     application.add_handler(conv_get_handler)
     application.add_handler(get_handler)
 
+    # Login to family
+    application.add_handler(conv_login_family_handler)
+    application.add_handler(login_family_handler)
     # Other handlers
     application.add_handler(cancel_registration_handler)
     application.add_handler(unknown_handler)

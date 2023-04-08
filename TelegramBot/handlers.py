@@ -68,7 +68,7 @@ async def create_family(update, context):
     context.user_data["family"] = FamilyInfo()
     user_has_family = db.user_has_family(update.message.chat.username)
     if user_has_family == -1:
-        await context.bot.send_message(chat_id=update.effective_chat.id, text="You are not registered. Register to create a family")
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="You already has family. Leave from other family to create new")
         return ConversationHandler.END
     await context.bot.send_message(chat_id=update.effective_chat.id, text="Enter LOGIN for your family")
     return 1
@@ -196,6 +196,7 @@ def data_conversion(spendings_category, spendings_price):
                 spendings_price_category[unique_spendings_category[i][0]] += spendings_price[j][0]
     return spendings_price_category
 
+
 def get_spending_period(family_id, period):
     """
     Getting information about period expenses by category and family members
@@ -276,4 +277,38 @@ async def get_spending(update, context):
         result = get_spending_period(family_id, update.message.text)
         await context.bot.send_message(chat_id=update.effective_chat.id,
                                        text=result)
+    return ConversationHandler.END
+
+
+async def login_to_family(update, context):
+    """
+    Handler to create family
+    """
+    context.user_data["family"] = FamilyInfo()
+    user_has_family = db.user_has_family(update.message.chat.username)
+    if user_has_family == -1:
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="You already has family. Leave from other family to enter in new")
+        return ConversationHandler.END
+    await context.bot.send_message(chat_id=update.effective_chat.id, text="Enter family login")
+    return 1
+
+async def family_login_to_enter(update,context):
+    """
+    Handler to get family login when enter in family
+    """
+    context.user_data["family"].login = update.message.text
+    await context.bot.send_message(chat_id=update.effective_chat.id, text="Enter password")
+    return 2
+
+async def family_password_to_enter(update, context):
+    """
+    Handler to get family password when enter in family
+    """
+    username = update.message.chat.username
+    context.user_data["family"].password = update.message.text
+    data_is_correct = db.check_family_data_to_enter(context.user_data["family"], username)
+    if data_is_correct:
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="You successful enter to family")
+    else:
+        await context.bot.send_message(chat_id=update.effective_chat.id, text="Invalid login or password")
     return ConversationHandler.END
