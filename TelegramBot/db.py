@@ -31,7 +31,8 @@ def register(user_name, telegram_id):
     try:
         x.execute(f'insert familymember(UserName, TelegramId) values ("{user_name}", "{telegram_id}")')
         conn.commit()
-    except:
+    except Exception as e:
+        print(e)
         conn.rollback()
     conn.close()
 
@@ -67,10 +68,14 @@ def user_has_family(username):
     try:
         x.execute(f'select * from familymember where TelegramId = "{username}"')
         result = x.fetchall()
-        if result[3] is None:
+        if result[0][3] is None:
             conn.close()
             return 0
-    except:
+        else :
+            conn.close()
+            return 1
+    except Exception as e:
+        print(e)
         conn.rollback()
     conn.close()
     return -1

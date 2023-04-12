@@ -19,7 +19,7 @@ depends_on = None
 def upgrade() -> None:
     op.create_table(
         "familymember",
-        sa.Column("Id", sa.Integer, autoincrement=True, nullable=False, unique=True),
+        sa.Column("Id", sa.INT, autoincrement=True, nullable=False, primary_key=True),
         sa.Column("UserName", sa.VARCHAR(30),  nullable=False),
         sa.Column("TelegramId", sa.VARCHAR(30), nullable=False, unique=True, primary_key=True),
         sa.Column("FamilyId", sa.Integer)

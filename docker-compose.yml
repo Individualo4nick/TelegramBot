@@ -7,20 +7,29 @@ services:
     command: python ./TelegramBot/main.py
     ports:
       - 80:80
+    environment:
+      DATABASE_URL: "mysql://user:mypassword@mysql_db/telegrambot"
     volumes:
       - ./:/app
     depends_on:
-      - mysql
-  mysql:
+      - mysql_db
+    networks:
+      - app-network
+  mysql_db:
     restart: always
     image: mysql
-    container_name: my_sql
+    container_name: mysql
     environment:
-      MYSQL_ROOT_PASSWORD: 'Vladik_1'
-      MYSQL_USER: 'user'
-      MYSQL_PASS: 'Vladik_1'
-      volumes:
-        -mysql:/var/lib/mysql
-
-
+      MYSQL_ROOT_PASSWORD: "Vladik_1"
+      MYSQL_USER: "user"
+      MYSQL_PASSWORD: "mypassword"
+      MYSQL_DATABASE: "telegrambot"
+    volumes:
+      - mysql:/var/lib/mysql
+    networks:
+      - app-network
+volumes:
+  mysql:
+networks:
+  app-network:
 
