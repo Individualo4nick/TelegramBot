@@ -1,16 +1,22 @@
 """
 Module for command handlers
 """
-from telegram import Update, KeyboardButton , ReplyKeyboardMarkup
+from telegram import Update, KeyboardButton, ReplyKeyboardMarkup
 from telegram.ext import ContextTypes, ConversationHandler
 import db
 import datetime
+import matplotlib.pyplot as plt
+import os
+'''import telebot
+from telebot import types'''
+
 
 class FamilyInfo:
     def __init__(self):
         self.login = ""
         self.password = ""
         self.family_name = ""
+
 
 class PurchaseData:
     def __init__(self):
@@ -60,7 +66,6 @@ async def cancel(update, context):
     return ConversationHandler.END
 
 
-
 async def create_family(update, context):
     """
     Handler to create family
@@ -68,7 +73,8 @@ async def create_family(update, context):
     context.user_data["family"] = FamilyInfo()
     user_has_family = db.user_has_family(update.message.chat.username)
     if user_has_family == -1:
-        await context.bot.send_message(chat_id=update.effective_chat.id, text="You already has family. Leave from other family to create new")
+        await context.bot.send_message(chat_id=update.effective_chat.id,
+                                       text="You already has family. Leave from other family to create new")
         return ConversationHandler.END
     await context.bot.send_message(chat_id=update.effective_chat.id, text="Enter LOGIN for your family")
     return 1
@@ -81,10 +87,12 @@ async def family_login(update, context):
     result = db.check_family_login(update.message.text)
     # Family with this id exist
     if result == -1:
-        await context.bot.send_message(chat_id=update.effective_chat.id, text="Family with such login exists. Enter login again")
+        await context.bot.send_message(chat_id=update.effective_chat.id,
+                                       text="Family with such login exists. Enter login again")
         return 1
     else:
-        await context.bot.send_message(chat_id=update.effective_chat.id, text="Cool! Next, enter password for your family account")
+        await context.bot.send_message(chat_id=update.effective_chat.id,
+                                       text="Cool! Next, enter password for your family account")
         context.user_data["family"].login = update.message.text
         return 2
 
@@ -95,11 +103,13 @@ async def family_password(update, context):
     """
     password = update.message.text
     if len(password) > 8 and ("".join(filter(str.isdigit, password)) != ""):
-        await context.bot.send_message(chat_id=update.effective_chat.id, text="We save your password. Enter your family name")
+        await context.bot.send_message(chat_id=update.effective_chat.id,
+                                       text="We save your password. Enter your family name")
         context.user_data["family"].password = password
         return 3
     else:
-        await context.bot.send_message(chat_id=update.effective_chat.id, text="Password must be more than 8 characters long and must contain numbers")
+        await context.bot.send_message(chat_id=update.effective_chat.id,
+                                       text="Password must be more than 8 characters long and must contain numbers")
         return 2
 
 
@@ -114,15 +124,16 @@ async def family_name(update, context):
                                    text="You have successfully raised a family")
     return ConversationHandler.END
 
+
 async def add_purchase(update, context):
     """
        Handler to add purchase
     """
     context.user_data["purchase"] = PurchaseData()
-    context.user_data["purchase"].buy_date =  datetime.date.today()
+    context.user_data["purchase"].buy_date = datetime.date.today()
     if db.user_has_family(update.message.chat.username) == -1:
-        await context.bot.send_message ( chat_id=update.effective_chat.id ,
-                                         text="You must be in the family to add purchases" )
+        await context.bot.send_message(chat_id=update.effective_chat.id,
+                                       text="You must be in the family to add purchases")
         return ConversationHandler.END
     purchase_types = [
         KeyboardButton("🚌 Transport"),
@@ -139,9 +150,10 @@ async def add_purchase(update, context):
     context.user_data["purchase"].member_id = update.message.chat.username
     context.user_data["purchase"].family_id = family_id[0]
     reply_markup = ReplyKeyboardMarkup(build_menu(purchase_types, 3), one_time_keyboard=True)
-    await context.bot.send_message (chat_id=update.effective_chat.id ,
-                                     text="Choose purchase type", reply_markup=reply_markup)
+    await context.bot.send_message(chat_id=update.effective_chat.id,
+                                   text="Choose purchase type", reply_markup=reply_markup)
     return 1
+
 
 async def enter_price(update, context):
     """
@@ -152,7 +164,8 @@ async def enter_price(update, context):
                                    text="Enter purchase price in rubles")
     return 2
 
-async def save_purchase(update,context):
+
+async def save_purchase(update, context):
     """
         Handler to save purchase
     """
@@ -161,6 +174,7 @@ async def save_purchase(update,context):
     await context.bot.send_message(chat_id=update.effective_chat.id,
                                    text="Purchase successful added")
     return ConversationHandler.END
+
 
 def build_menu(buttons, n_cols,
                header_buttons=None,
@@ -179,6 +193,7 @@ def build_menu(buttons, n_cols,
     if footer_buttons:
         menu.append([footer_buttons])
     return menu
+
 
 def data_conversion(spendings_category, spendings_price):
     """
@@ -205,7 +220,6 @@ def get_spending_period(family_id, period):
     :return: the message that the bot will display
     """
     result = ''
-
     if period == 'Month':
         now = datetime.datetime.now()
         now = now.month
@@ -218,25 +232,56 @@ def get_spending_period(family_id, period):
     spendings_member = db.get_period_members(period, now, family_id)
     unique_spendings_member = tuple(set(spendings_member))
     members = {}
-    for i in range(len(unique_spendings_member)):
-        spendings_price, spendings_category = db.get_spend_member(period, now, unique_spendings_member[i][0], family_id)
+    if len(unique_spendings_member)!=0:
+        for i in range(len(unique_spendings_member)):
+            spendings_price, spendings_category = db.get_spend_member(period, now, unique_spendings_member[i][0], family_id)
+            spendings_price_category = data_conversion(spendings_category, spendings_price)
+            members[unique_spendings_member[i][0]] = spendings_price_category
+        spendings_price, spendings_category = db.get_spend(period, now, family_id)
         spendings_price_category = data_conversion(spendings_category, spendings_price)
-        members[unique_spendings_member[i][0]] = spendings_price_category
-    spendings_price, spendings_category = db.get_spend(period, now, family_id)
-    spendings_price_category = data_conversion(spendings_category, spendings_price)
-    purchase = f'This {period} you made purchases in the following categories:\n\n'
-    result += purchase
-    for category in spendings_price_category.keys():
-        purchase = f'{category}: for the amount of {spendings_price_category[category]} rubles \n\n'
+        purchase = f'This {period} you made purchases in the following categories:\n\n'
         result += purchase
-    result += "=====================================================\n\n"
-    for member in members.keys():
-        purchase = f'User {member} made purchases this {period} in the following categories:\n\n'
-        result += purchase
-        for category in members[member].keys():
-            purchase = f'{category} category for the amount of {members[member][category]} rubles \n \n'
+        get_plot_category(spendings_price_category)
+        for category in spendings_price_category.keys():
+            purchase = f'{category}: for the amount of {spendings_price_category[category]} rubles \n\n'
             result += purchase
+        result += "=================================\n\n"
+        get_plot_members(members)
+        for member in members.keys():
+            purchase = f'User {member} made purchases this {period} in the following categories:\n\n'
+            result += purchase
+            for category in members[member].keys():
+                purchase = f'{category} category for the amount of {members[member][category]} rubles \n \n'
+                result += purchase
+    else:
+        result = ''
     return result
+
+
+def get_plot_category(spendings_price_category):
+    spendings_price_category_keys = spendings_price_category.keys()
+    spendings_price_category_values = spendings_price_category.values()
+    fig1, ax1 = plt.subplots()
+
+    wedges, texts, autotexts = ax1.pie(spendings_price_category_values, labels=spendings_price_category_keys,
+                                       autopct='%1.2f')
+    ax1.axis('equal')
+    plt.savefig('saved_figure.png')
+
+
+def get_plot_members(members):
+    members_keys = members.keys()
+    members_values = []
+    member_spend = 0
+    for member in members.keys():
+        for category in members[member].keys():
+            member_spend += int(members[member][category])
+        members_values.append(member_spend)
+        member_spend = 0
+    fig1, ax1 = plt.subplots()
+    wedges, texts, autotexts = ax1.pie(members_values, labels=members_keys, autopct='%1.2f')
+    ax1.axis('equal')
+    plt.savefig('saved_figure1.png')
 
 
 async def choose_period(update, context):
@@ -260,23 +305,31 @@ async def choose_period(update, context):
                                        text=result)
         return -1
 
+
 async def get_spending(update, context):
     """
     Getting information for a certain period and outputting it
     """
     family_id = db.get_family_id(update.message.chat.username)[0]
-    if update.message.text == 'Month':
-        result = get_spending_period(family_id, update.message.text)
+    result = get_spending_period(family_id, update.message.text)
+    if result:
         await context.bot.send_message(chat_id=update.effective_chat.id,
                                        text=result)
-    if update.message.text == 'Week':
-        result = get_spending_period(family_id, update.message.text)
+        '''await context.bot.send_media_group(chat_id=update.effective_chat.id,
+                                           media=[types.InputMediaPhoto(open('saved_figure.png', 'rb')),
+                                                  types.InputMediaPhoto(open('saved_figure1.png', 'rb'))],
+                                           )'''
+        await context.bot.send_photo(chat_id=update.effective_chat.id,
+                                       photo=open('saved_figure.png', 'rb'),
+                                     caption="Chart of spending by category:")
+        await context.bot.send_photo(chat_id=update.effective_chat.id,
+                                     photo=open('saved_figure1.png', 'rb'),
+                                     caption="Chart of spending by members:")
+        os.remove('saved_figure.png')
+        os.remove('saved_figure1.png')
+    else:
         await context.bot.send_message(chat_id=update.effective_chat.id,
-                                       text=result)
-    if update.message.text == 'Day':
-        result = get_spending_period(family_id, update.message.text)
-        await context.bot.send_message(chat_id=update.effective_chat.id,
-                                       text=result)
+                                       text="You didn't spend anything during this period")
     return ConversationHandler.END
 
 
@@ -287,18 +340,21 @@ async def login_to_family(update, context):
     context.user_data["family"] = FamilyInfo()
     user_has_family = db.user_has_family(update.message.chat.username)
     if user_has_family == -1:
-        await context.bot.send_message(chat_id=update.effective_chat.id, text="You already has family. Leave from other family to enter in new")
+        await context.bot.send_message(chat_id=update.effective_chat.id,
+                                       text="You already has family. Leave from other family to enter in new")
         return ConversationHandler.END
     await context.bot.send_message(chat_id=update.effective_chat.id, text="Enter family login")
     return 1
 
-async def family_login_to_enter(update,context):
+
+async def family_login_to_enter(update, context):
     """
     Handler to get family login when enter in family
     """
     context.user_data["family"].login = update.message.text
     await context.bot.send_message(chat_id=update.effective_chat.id, text="Enter password")
     return 2
+
 
 async def family_password_to_enter(update, context):
     """
@@ -313,6 +369,7 @@ async def family_password_to_enter(update, context):
         await context.bot.send_message(chat_id=update.effective_chat.id, text="Invalid login or password")
     return ConversationHandler.END
 
+
 async def leave_from_family(update, context):
     """
     Handler to leave from family
@@ -320,7 +377,8 @@ async def leave_from_family(update, context):
     username = update.message.chat.username
 
     result = db.leave_family(username)
-    if result :
+    if result:
         await context.bot.send_message(chat_id=update.effective_chat.id, text="You successful leave from family")
     else:
-        await context.bot.send_message(chat_id=update.effective_chat.id, text="You are not a member of the family, therefore you cannot leave it")
+        await context.bot.send_message(chat_id=update.effective_chat.id,
+                                       text="You are not a member of the family, therefore you cannot leave it")
