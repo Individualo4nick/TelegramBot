@@ -7,7 +7,7 @@ import MySQLdb
 import json
 
 
-with open("./config.json") as json_data:
+with open("../config.json") as json_data:
     data = json.load(json_data)
 
 def connect_db():
@@ -224,9 +224,8 @@ def leave_family(username):
         if family_id is None:
             return False
         else:
-            none = None
             x.execute(
-                f'update familymember set FamilyId = {none} where TelegramId = "{username}"')
+                f'update familymember set FamilyId = NULL where TelegramId = "{username}"')
             conn.commit()
             return True
     except Error as err:

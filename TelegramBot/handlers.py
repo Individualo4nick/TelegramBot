@@ -27,11 +27,24 @@ class PurchaseData:
         self.family_id = -1
 
 
+register_button = ["Registration"]
+
+create_or_login_to_family = ["Create new family", "Join to family"]
+
+main_functions = ["Add purchase", "Get statistics", "Leave from family"]
+
+
+
+
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """
     Start command for testing
     """
-    await context.bot.send_message(chat_id=update.effective_chat.id, text="I'm a bot, please talk to me!")
+    reply_markup = ReplyKeyboardMarkup(build_menu(register_button, 1), one_time_keyboard=True)
+
+    await context.bot.send_message(chat_id=update.effective_chat.id, reply_markup=reply_markup, text="To start use bot, you should link your"
+                                                                          " telegram")
+
 
 
 async def unknown(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -54,13 +67,14 @@ async def get_name(update, context):
     Handler for getting user name
     """
     db.register(update.message.text, update.message.chat.username)
-    await context.bot.send_message(chat_id=update.effective_chat.id, text="Your data saved")
+    reply_markup = ReplyKeyboardMarkup(build_menu(create_or_login_to_family, 2), one_time_keyboard=True)
+    await context.bot.send_message(chat_id=update.effective_chat.id,reply_markup=reply_markup , text="Your data saved")
     return ConversationHandler.END
 
 
 async def cancel(update, context):
     """
-    Hadler to end the conversation
+    Handler to end the conversation
     """
     await context.bot.send_message(chat_id=update.effective_chat.id, text="Action canceled ")
     return ConversationHandler.END
@@ -120,8 +134,11 @@ async def family_name(update, context):
     name = update.message.text
     context.user_data["family"].family_name = name
     db.add_family(context.user_data["family"], update.message.chat.username)
-    await context.bot.send_message(chat_id=update.effective_chat.id,
+
+    reply_markup = ReplyKeyboardMarkup(build_menu(main_functions, 3), one_time_keyboard=True)
+    await context.bot.send_message(chat_id=update.effective_chat.id, reply_markup=reply_markup,
                                    text="You have successfully raised a family")
+
     return ConversationHandler.END
 
 
@@ -171,8 +188,10 @@ async def save_purchase(update, context):
     """
     context.user_data["purchase"].price = int(update.message.text)
     db.add_purchase(context.user_data["purchase"])
-    await context.bot.send_message(chat_id=update.effective_chat.id,
+    reply_markup = ReplyKeyboardMarkup(build_menu(main_functions, 3), one_time_keyboard=True)
+    await context.bot.send_message(chat_id=update.effective_chat.id, reply_markup=reply_markup,
                                    text="Purchase successful added")
+
     return ConversationHandler.END
 
 
@@ -312,6 +331,7 @@ async def get_spending(update, context):
     """
     family_id = db.get_family_id(update.message.chat.username)[0]
     result = get_spending_period(family_id, update.message.text)
+    reply_markup1 = ReplyKeyboardMarkup(build_menu(main_functions, 3), one_time_keyboard=True)
     if result:
         await context.bot.send_message(chat_id=update.effective_chat.id,
                                        text=result)
@@ -324,11 +344,12 @@ async def get_spending(update, context):
                                      caption="Chart of spending by category:")
         await context.bot.send_photo(chat_id=update.effective_chat.id,
                                      photo=open('saved_figure1.png', 'rb'),
-                                     caption="Chart of spending by members:")
+                                     caption="Chart of spending by members:",
+                                     reply_markup=reply_markup1)
         os.remove('saved_figure.png')
         os.remove('saved_figure1.png')
     else:
-        await context.bot.send_message(chat_id=update.effective_chat.id,
+        await context.bot.send_message(chat_id=update.effective_chat.id, reply_markup=reply_markup1,
                                        text="You didn't spend anything during this period")
     return ConversationHandler.END
 
@@ -363,10 +384,14 @@ async def family_password_to_enter(update, context):
     username = update.message.chat.username
     context.user_data["family"].password = update.message.text
     data_is_correct = db.check_family_data_to_enter(context.user_data["family"], username)
+    reply_markup1 = ReplyKeyboardMarkup(build_menu(main_functions, 3), one_time_keyboard=True)
+    reply_markup2 = ReplyKeyboardMarkup(build_menu(create_or_login_to_family, 2), one_time_keyboard=True)
+
     if data_is_correct:
-        await context.bot.send_message(chat_id=update.effective_chat.id, text="You successful enter to family")
+        await context.bot.send_message(chat_id=update.effective_chat.id, reply_markup=reply_markup1,
+                                       text="You successful enter to family")
     else:
-        await context.bot.send_message(chat_id=update.effective_chat.id, text="Invalid login or password")
+        await context.bot.send_message(chat_id=update.effective_chat.id, reply_markup=reply_markup2, text="Invalid login or password")
     return ConversationHandler.END
 
 
@@ -377,8 +402,10 @@ async def leave_from_family(update, context):
     username = update.message.chat.username
 
     result = db.leave_family(username)
+    reply_markup2 = ReplyKeyboardMarkup(build_menu(create_or_login_to_family, 2), one_time_keyboard=True)
+
     if result:
-        await context.bot.send_message(chat_id=update.effective_chat.id, text="You successful leave from family")
+        await context.bot.send_message(chat_id=update.effective_chat.id, reply_markup=reply_markup2, text="You successful leave from family")
     else:
-        await context.bot.send_message(chat_id=update.effective_chat.id,
+        await context.bot.send_message(chat_id=update.effective_chat.id, reply_markup=reply_markup2,
                                        text="You are not a member of the family, therefore you cannot leave it")
