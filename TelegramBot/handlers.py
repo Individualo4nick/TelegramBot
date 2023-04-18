@@ -31,7 +31,7 @@ register_button = ["Registration"]
 
 create_or_login_to_family = ["Create new family", "Join to family"]
 
-main_functions = ["Add purchase", "Get statistics", "Leave from family"]
+main_functions = ["Add purchase", "Get statistics", "Leave from family", "Get family members"]
 
 
 
@@ -243,8 +243,11 @@ def get_spending_period(family_id, period):
         now = datetime.datetime.now()
         now = now.month
     elif period == 'Week':
+        is_sunday = datetime.datetime.today().weekday()
         now = datetime.datetime.today()
         now = now.isocalendar()[1]
+        if is_sunday == 6:
+            now += 1
     elif period == 'Day':
         now = datetime.datetime.now()
         now = now.day
@@ -283,7 +286,7 @@ def get_plot_category(spendings_price_category):
     fig1, ax1 = plt.subplots()
 
     wedges, texts, autotexts = ax1.pie(spendings_price_category_values, labels=spendings_price_category_keys,
-                                       autopct='%1.2f')
+                                       autopct='%1.2f%%')
     ax1.axis('equal')
     plt.savefig('saved_figure.png')
 
@@ -298,7 +301,7 @@ def get_plot_members(members):
         members_values.append(member_spend)
         member_spend = 0
     fig1, ax1 = plt.subplots()
-    wedges, texts, autotexts = ax1.pie(members_values, labels=members_keys, autopct='%1.2f')
+    wedges, texts, autotexts = ax1.pie(members_values, labels=members_keys, autopct='%1.2f%%')
     ax1.axis('equal')
     plt.savefig('saved_figure1.png')
 
@@ -409,3 +412,12 @@ async def leave_from_family(update, context):
     else:
         await context.bot.send_message(chat_id=update.effective_chat.id, reply_markup=reply_markup2,
                                        text="You are not a member of the family, therefore you cannot leave it")
+
+async def get_members(update, context):
+    family_id = db.get_family_id(update.message.chat.username)[0]
+    family_name = db.get_family_name(family_id)[0]
+    usernames, nicknames = db.get_members(family_id)
+    result = f'Family {family_name}: \n'
+    for i in range(len(usernames)):
+        result += f'{usernames[i]} - {nicknames[i]} \n'
+    await context.bot.send_message(chat_id=update.effective_chat.id, text=result)

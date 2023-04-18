@@ -11,7 +11,7 @@ logging.basicConfig(
 
 
 if __name__ == '__main__':
-    with open("../config.json") as json_data:
+    with open("./config.json") as json_data:
         data = json.load(json_data)
 
     application = ApplicationBuilder().token(data["Token"]).build()
@@ -67,6 +67,8 @@ if __name__ == '__main__':
     )
     get_handler = MessageHandler(filters=filters.Regex('Get statistics'), callback=handlers.get_spending)
 
+    get_members_handler = MessageHandler(filters=filters.Regex('Get family members'), callback=handlers.get_members)
+
     unknown_handler = MessageHandler(filters.COMMAND, handlers.unknown)
 
 
@@ -78,6 +80,7 @@ if __name__ == '__main__':
     # Create family
     application.add_handler(conv_create_family_handler)
     application.add_handler(create_family_handler)
+
     # User registration
     application.add_handler(conv_registration_handler)
     application.add_handler(registration_handler)
@@ -89,6 +92,9 @@ if __name__ == '__main__':
     # Get spendings
     application.add_handler(conv_get_handler)
     application.add_handler(get_handler)
+
+    # Get family members
+    application.add_handler(get_members_handler)
 
     # Login to family
     application.add_handler(conv_login_family_handler)

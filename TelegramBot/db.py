@@ -7,7 +7,7 @@ import MySQLdb
 import json
 
 
-with open("../config.json") as json_data:
+with open("./config.json") as json_data:
     data = json.load(json_data)
 
 def connect_db():
@@ -111,6 +111,21 @@ def get_family_id(user_id):
     x = conn.cursor()
     try:
         x.execute(f'select FamilyId from familymember where TelegramId="{user_id}" ')
+        return x.fetchall()[0]
+    except:
+        conn.rollback()
+    conn.close()
+
+def get_family_name(family_id):
+    """
+    Search family name by user telegram id
+    :param family_id: id of family
+    :return:
+    """
+    conn = connect_db()
+    x = conn.cursor()
+    try:
+        x.execute(f'select FamilyName from family where Id="{family_id}"')
         return x.fetchall()[0]
     except:
         conn.rollback()
@@ -232,3 +247,11 @@ def leave_family(username):
         conn.rollback()
     conn.close()
     return False
+
+def get_members(family_id):
+    conn = connect_db()
+    username_req = f'select UserName from familymember where FamilyId="{family_id}"'
+    nickname_req = f'select TelegramId from familymember where FamilyId="{family_id}"'
+    username = execute_read_query(conn, username_req)[0]
+    nickname = execute_read_query(conn, nickname_req)[0]
+    return username, nickname
