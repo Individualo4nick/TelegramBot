@@ -30,91 +30,161 @@
           <div class="body" role="main">
             
   <h1>Source code for TelegramBot.handlers</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">telegram</span> <span class="kn">import</span> <span class="n">Update</span><span class="p">,</span> <span class="n">KeyboardButton</span> <span class="p">,</span> <span class="n">ReplyKeyboardMarkup</span>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module for command handlers</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">telegram</span> <span class="kn">import</span> <span class="n">Update</span><span class="p">,</span> <span class="n">KeyboardButton</span><span class="p">,</span> <span class="n">ReplyKeyboardMarkup</span>
 <span class="kn">from</span> <span class="nn">telegram.ext</span> <span class="kn">import</span> <span class="n">ContextTypes</span><span class="p">,</span> <span class="n">ConversationHandler</span>
-<span class="kn">import</span> <span class="nn">TelegramBot.db</span>
+<span class="kn">import</span> <span class="nn">TelegramBot.db</span> <span class="k">as</span> <span class="nn">db</span>
 <span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="sd">&#39;&#39;&#39;import telebot</span>
+<span class="sd">from telebot import types&#39;&#39;&#39;</span>
+
+<span class="k">def</span> <span class="fm">__init__</span><span class="p">():</span>
+    <span class="k">pass</span>
+
+<div class="viewcode-block" id="FamilyInfo"><a class="viewcode-back" href="../../TelegramBot.html#TelegramBot.handlers.FamilyInfo">[docs]</a><span class="k">class</span> <span class="nc">FamilyInfo</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">login</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">family_name</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="PurchaseData"><a class="viewcode-back" href="../../TelegramBot.html#TelegramBot.handlers.PurchaseData">[docs]</a><span class="k">class</span> <span class="nc">PurchaseData</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">price</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">buy_type</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">buy_date</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">member_id</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">family_id</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span></div>
+
+
+<span class="n">register_button</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;📃 Registration&quot;</span><span class="p">]</span>
+
+<span class="n">create_or_login_to_family</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;👨‍👩‍👧‍👦Create new family&quot;</span><span class="p">,</span> <span class="s2">&quot;🚪 Join to family&quot;</span><span class="p">]</span>
+
+<span class="n">main_functions</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;💵 Add purchase&quot;</span><span class="p">,</span> <span class="s2">&quot;📊 Get statistics&quot;</span><span class="p">,</span> <span class="s2">&quot;🚪 Leave from family&quot;</span><span class="p">,</span> <span class="s2">&quot;📜 Get family members&quot;</span><span class="p">]</span>
+
+
 
 
 <div class="viewcode-block" id="start"><a class="viewcode-back" href="../../TelegramBot.html#TelegramBot.handlers.start">[docs]</a><span class="k">async</span> <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="n">update</span><span class="p">:</span> <span class="n">Update</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">ContextTypes</span><span class="o">.</span><span class="n">DEFAULT_TYPE</span><span class="p">):</span>
-    <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">chat_id</span><span class="o">=</span><span class="n">update</span><span class="o">.</span><span class="n">effective_chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;I&#39;m a bot, please talk to me!&quot;</span><span class="p">)</span></div>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Start command for testing</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">reply_markup</span> <span class="o">=</span> <span class="n">ReplyKeyboardMarkup</span><span class="p">(</span><span class="n">build_menu</span><span class="p">(</span><span class="n">register_button</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">one_time_keyboard</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">chat_id</span><span class="o">=</span><span class="n">update</span><span class="o">.</span><span class="n">effective_chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">reply_markup</span><span class="o">=</span><span class="n">reply_markup</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;To start use bot, you should link your&quot;</span>
+                                                                          <span class="s2">&quot; telegram&quot;</span><span class="p">)</span></div>
+
 
 
 <div class="viewcode-block" id="unknown"><a class="viewcode-back" href="../../TelegramBot.html#TelegramBot.handlers.unknown">[docs]</a><span class="k">async</span> <span class="k">def</span> <span class="nf">unknown</span><span class="p">(</span><span class="n">update</span><span class="p">:</span> <span class="n">Update</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">ContextTypes</span><span class="o">.</span><span class="n">DEFAULT_TYPE</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Handler for unknown commands</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">chat_id</span><span class="o">=</span><span class="n">update</span><span class="o">.</span><span class="n">effective_chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Sorry, i didn&#39;t understand that command&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="reg"><a class="viewcode-back" href="../../TelegramBot.html#TelegramBot.handlers.reg">[docs]</a><span class="k">async</span> <span class="k">def</span> <span class="nf">reg</span><span class="p">(</span><span class="n">update</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Handler for user registration</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">chat_id</span><span class="o">=</span><span class="n">update</span><span class="o">.</span><span class="n">effective_chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;What is your name?&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="mi">1</span></div>
 
 
 <div class="viewcode-block" id="get_name"><a class="viewcode-back" href="../../TelegramBot.html#TelegramBot.handlers.get_name">[docs]</a><span class="k">async</span> <span class="k">def</span> <span class="nf">get_name</span><span class="p">(</span><span class="n">update</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Handler for getting user name</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">db</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">update</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">update</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">username</span><span class="p">)</span>
-    <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">chat_id</span><span class="o">=</span><span class="n">update</span><span class="o">.</span><span class="n">effective_chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Your data saved&quot;</span><span class="p">)</span>
+    <span class="n">reply_markup</span> <span class="o">=</span> <span class="n">ReplyKeyboardMarkup</span><span class="p">(</span><span class="n">build_menu</span><span class="p">(</span><span class="n">create_or_login_to_family</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">one_time_keyboard</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">chat_id</span><span class="o">=</span><span class="n">update</span><span class="o">.</span><span class="n">effective_chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span><span class="n">reply_markup</span><span class="o">=</span><span class="n">reply_markup</span> <span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Your data saved&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">ConversationHandler</span><span class="o">.</span><span class="n">END</span></div>
 
 
 <div class="viewcode-block" id="cancel"><a class="viewcode-back" href="../../TelegramBot.html#TelegramBot.handlers.cancel">[docs]</a><span class="k">async</span> <span class="k">def</span> <span class="nf">cancel</span><span class="p">(</span><span class="n">update</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Handler to end the conversation</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">chat_id</span><span class="o">=</span><span class="n">update</span><span class="o">.</span><span class="n">effective_chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Action canceled &quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">ConversationHandler</span><span class="o">.</span><span class="n">END</span></div>
 
 
-
-
-<span class="n">family_info</span> <span class="o">=</span> <span class="p">[]</span>
-
-
 <div class="viewcode-block" id="create_family"><a class="viewcode-back" href="../../TelegramBot.html#TelegramBot.handlers.create_family">[docs]</a><span class="k">async</span> <span class="k">def</span> <span class="nf">create_family</span><span class="p">(</span><span class="n">update</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Handler to create family</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">context</span><span class="o">.</span><span class="n">user_data</span><span class="p">[</span><span class="s2">&quot;family&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">FamilyInfo</span><span class="p">()</span>
     <span class="n">user_has_family</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">user_has_family</span><span class="p">(</span><span class="n">update</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">username</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">user_has_family</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-        <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">chat_id</span><span class="o">=</span><span class="n">update</span><span class="o">.</span><span class="n">effective_chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;You are not registered. Register to create a family&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">ConversationHandler</span><span class="o">.</span><span class="n">END</span>
-    <span class="k">if</span> <span class="n">user_has_family</span> <span class="o">==</span> <span class="o">-</span><span class="mi">2</span><span class="p">:</span>
-        <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">chat_id</span><span class="o">=</span><span class="n">update</span><span class="o">.</span><span class="n">effective_chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;You are already in the family. Leave the current family to create a new one&quot;</span><span class="p">)</span>
+        <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">chat_id</span><span class="o">=</span><span class="n">update</span><span class="o">.</span><span class="n">effective_chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                                       <span class="n">text</span><span class="o">=</span><span class="s2">&quot;You already has family. Leave from other family to create new&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ConversationHandler</span><span class="o">.</span><span class="n">END</span>
     <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">chat_id</span><span class="o">=</span><span class="n">update</span><span class="o">.</span><span class="n">effective_chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Enter LOGIN for your family&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="mi">1</span></div>
 
 
 <div class="viewcode-block" id="family_login"><a class="viewcode-back" href="../../TelegramBot.html#TelegramBot.handlers.family_login">[docs]</a><span class="k">async</span> <span class="k">def</span> <span class="nf">family_login</span><span class="p">(</span><span class="n">update</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;im in login&quot;</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Handler to get family login</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">result</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">check_family_login</span><span class="p">(</span><span class="n">update</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
-
+    <span class="c1"># Family with this id exist</span>
     <span class="k">if</span> <span class="n">result</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
-        <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">chat_id</span><span class="o">=</span><span class="n">update</span><span class="o">.</span><span class="n">effective_chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Family with such login exists. Enter login again&quot;</span><span class="p">)</span>
+        <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">chat_id</span><span class="o">=</span><span class="n">update</span><span class="o">.</span><span class="n">effective_chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                                       <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Family with such login exists. Enter login again&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="mi">1</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">chat_id</span><span class="o">=</span><span class="n">update</span><span class="o">.</span><span class="n">effective_chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Cool! Next, enter password for your family account&quot;</span><span class="p">)</span>
-        <span class="n">family_info</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">update</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">chat_id</span><span class="o">=</span><span class="n">update</span><span class="o">.</span><span class="n">effective_chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                                       <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Cool! Next, enter password for your family account&quot;</span><span class="p">)</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">user_data</span><span class="p">[</span><span class="s2">&quot;family&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">login</span> <span class="o">=</span> <span class="n">update</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">text</span>
         <span class="k">return</span> <span class="mi">2</span></div>
 
 
 <div class="viewcode-block" id="family_password"><a class="viewcode-back" href="../../TelegramBot.html#TelegramBot.handlers.family_password">[docs]</a><span class="k">async</span> <span class="k">def</span> <span class="nf">family_password</span><span class="p">(</span><span class="n">update</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">       Handler to get family password</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">password</span> <span class="o">=</span> <span class="n">update</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">text</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">password</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">8</span> <span class="ow">and</span> <span class="p">(</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">filter</span><span class="p">(</span><span class="nb">str</span><span class="o">.</span><span class="n">isdigit</span><span class="p">,</span> <span class="n">password</span><span class="p">))</span> <span class="o">!=</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
-        <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">chat_id</span><span class="o">=</span><span class="n">update</span><span class="o">.</span><span class="n">effective_chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;We save your password. Enter your family name&quot;</span><span class="p">)</span>
-        <span class="n">family_info</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">password</span><span class="p">)</span>
+        <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">chat_id</span><span class="o">=</span><span class="n">update</span><span class="o">.</span><span class="n">effective_chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                                       <span class="n">text</span><span class="o">=</span><span class="s2">&quot;We save your password. Enter your family name&quot;</span><span class="p">)</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">user_data</span><span class="p">[</span><span class="s2">&quot;family&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="n">password</span>
         <span class="k">return</span> <span class="mi">3</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">chat_id</span><span class="o">=</span><span class="n">update</span><span class="o">.</span><span class="n">effective_chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Password must be more than 8 characters long and must contain numbers&quot;</span><span class="p">)</span>
+        <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">chat_id</span><span class="o">=</span><span class="n">update</span><span class="o">.</span><span class="n">effective_chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                                       <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Password must be more than 8 characters long and must contain numbers&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="mi">2</span></div>
 
 
 <div class="viewcode-block" id="family_name"><a class="viewcode-back" href="../../TelegramBot.html#TelegramBot.handlers.family_name">[docs]</a><span class="k">async</span> <span class="k">def</span> <span class="nf">family_name</span><span class="p">(</span><span class="n">update</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">       Handler to get family name</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">name</span> <span class="o">=</span> <span class="n">update</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">text</span>
-    <span class="n">family_info</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-    <span class="n">db</span><span class="o">.</span><span class="n">add_family</span><span class="p">(</span><span class="n">family_info</span><span class="p">,</span> <span class="n">update</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">username</span><span class="p">)</span>
-    <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">chat_id</span><span class="o">=</span><span class="n">update</span><span class="o">.</span><span class="n">effective_chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+    <span class="n">context</span><span class="o">.</span><span class="n">user_data</span><span class="p">[</span><span class="s2">&quot;family&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">family_name</span> <span class="o">=</span> <span class="n">name</span>
+    <span class="n">db</span><span class="o">.</span><span class="n">add_family</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">user_data</span><span class="p">[</span><span class="s2">&quot;family&quot;</span><span class="p">],</span> <span class="n">update</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">username</span><span class="p">)</span>
+
+    <span class="n">reply_markup</span> <span class="o">=</span> <span class="n">ReplyKeyboardMarkup</span><span class="p">(</span><span class="n">build_menu</span><span class="p">(</span><span class="n">main_functions</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">one_time_keyboard</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">chat_id</span><span class="o">=</span><span class="n">update</span><span class="o">.</span><span class="n">effective_chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">reply_markup</span><span class="o">=</span><span class="n">reply_markup</span><span class="p">,</span>
                                    <span class="n">text</span><span class="o">=</span><span class="s2">&quot;You have successfully raised a family&quot;</span><span class="p">)</span>
+
     <span class="k">return</span> <span class="n">ConversationHandler</span><span class="o">.</span><span class="n">END</span></div>
 
-<span class="n">purchase_data</span> <span class="o">=</span> <span class="p">[]</span>
+
 <div class="viewcode-block" id="add_purchase"><a class="viewcode-back" href="../../TelegramBot.html#TelegramBot.handlers.add_purchase">[docs]</a><span class="k">async</span> <span class="k">def</span> <span class="nf">add_purchase</span><span class="p">(</span><span class="n">update</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
-    <span class="n">purchase_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">())</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">db</span><span class="o">.</span><span class="n">user_has_family</span><span class="p">(</span><span class="n">update</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">username</span><span class="p">):</span>
-        <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">send_message</span> <span class="p">(</span> <span class="n">chat_id</span><span class="o">=</span><span class="n">update</span><span class="o">.</span><span class="n">effective_chat</span><span class="o">.</span><span class="n">id</span> <span class="p">,</span>
-                                         <span class="n">text</span><span class="o">=</span><span class="s2">&quot;You must be in the family to add purchases&quot;</span> <span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">       Handler to add purchase</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">context</span><span class="o">.</span><span class="n">user_data</span><span class="p">[</span><span class="s2">&quot;purchase&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PurchaseData</span><span class="p">()</span>
+    <span class="n">context</span><span class="o">.</span><span class="n">user_data</span><span class="p">[</span><span class="s2">&quot;purchase&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">buy_date</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">db</span><span class="o">.</span><span class="n">user_has_family</span><span class="p">(</span><span class="n">update</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">username</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">chat_id</span><span class="o">=</span><span class="n">update</span><span class="o">.</span><span class="n">effective_chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                                       <span class="n">text</span><span class="o">=</span><span class="s2">&quot;You must be in the family to add purchases&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ConversationHandler</span><span class="o">.</span><span class="n">END</span>
     <span class="n">purchase_types</span> <span class="o">=</span> <span class="p">[</span>
         <span class="n">KeyboardButton</span><span class="p">(</span><span class="s2">&quot;🚌 Transport&quot;</span><span class="p">),</span>
@@ -128,29 +198,56 @@
         <span class="n">KeyboardButton</span><span class="p">(</span><span class="s2">&quot;🏠 Communications, Internet, etc.&quot;</span><span class="p">)</span>
     <span class="p">]</span>
     <span class="n">family_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_family_id</span><span class="p">(</span><span class="n">update</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">username</span><span class="p">)</span>
-    <span class="n">purchase_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">update</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">username</span><span class="p">)</span>
-    <span class="n">purchase_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">family_id</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">context</span><span class="o">.</span><span class="n">user_data</span><span class="p">[</span><span class="s2">&quot;purchase&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">member_id</span> <span class="o">=</span> <span class="n">update</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">username</span>
+    <span class="n">context</span><span class="o">.</span><span class="n">user_data</span><span class="p">[</span><span class="s2">&quot;purchase&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">family_id</span> <span class="o">=</span> <span class="n">family_id</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">reply_markup</span> <span class="o">=</span> <span class="n">ReplyKeyboardMarkup</span><span class="p">(</span><span class="n">build_menu</span><span class="p">(</span><span class="n">purchase_types</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">one_time_keyboard</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">send_message</span> <span class="p">(</span> <span class="n">chat_id</span><span class="o">=</span><span class="n">update</span><span class="o">.</span><span class="n">effective_chat</span><span class="o">.</span><span class="n">id</span> <span class="p">,</span>
-                                     <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Choose purchase type&quot;</span><span class="p">,</span> <span class="n">reply_markup</span><span class="o">=</span><span class="n">reply_markup</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">chat_id</span><span class="o">=</span><span class="n">update</span><span class="o">.</span><span class="n">effective_chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                                   <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Choose purchase type&quot;</span><span class="p">,</span> <span class="n">reply_markup</span><span class="o">=</span><span class="n">reply_markup</span><span class="p">)</span>
     <span class="k">return</span> <span class="mi">1</span></div>
 
+
 <div class="viewcode-block" id="enter_price"><a class="viewcode-back" href="../../TelegramBot.html#TelegramBot.handlers.enter_price">[docs]</a><span class="k">async</span> <span class="k">def</span> <span class="nf">enter_price</span><span class="p">(</span><span class="n">update</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
-    <span class="n">purchase_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">update</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">text</span><span class="p">[</span><span class="mi">2</span><span class="p">:])</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">       Handler to get purchase price</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">context</span><span class="o">.</span><span class="n">user_data</span><span class="p">[</span><span class="s2">&quot;purchase&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">buy_type</span> <span class="o">=</span> <span class="n">update</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">text</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span>
     <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">chat_id</span><span class="o">=</span><span class="n">update</span><span class="o">.</span><span class="n">effective_chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
                                    <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Enter purchase price in rubles&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="mi">2</span></div>
 
-<div class="viewcode-block" id="save_purchase"><a class="viewcode-back" href="../../TelegramBot.html#TelegramBot.handlers.save_purchase">[docs]</a><span class="k">async</span> <span class="k">def</span> <span class="nf">save_purchase</span><span class="p">(</span><span class="n">update</span><span class="p">,</span><span class="n">context</span><span class="p">):</span>
-    <span class="n">purchase_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">update</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">text</span><span class="p">))</span>
-    <span class="n">db</span><span class="o">.</span><span class="n">add_purchase</span><span class="p">(</span><span class="n">purchase_data</span><span class="p">)</span>
-    <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">chat_id</span><span class="o">=</span><span class="n">update</span><span class="o">.</span><span class="n">effective_chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-                                   <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Purchase successful added&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">ConversationHandler</span><span class="o">.</span><span class="n">END</span></div>
+
+<div class="viewcode-block" id="save_purchase"><a class="viewcode-back" href="../../TelegramBot.html#TelegramBot.handlers.save_purchase">[docs]</a><span class="k">async</span> <span class="k">def</span> <span class="nf">save_purchase</span><span class="p">(</span><span class="n">update</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Handler to save purchase</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">reply_markup</span> <span class="o">=</span> <span class="n">ReplyKeyboardMarkup</span><span class="p">(</span><span class="n">build_menu</span><span class="p">(</span><span class="n">main_functions</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">one_time_keyboard</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">context</span><span class="o">.</span><span class="n">user_data</span><span class="p">[</span><span class="s2">&quot;purchase&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">price</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">update</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">context</span><span class="o">.</span><span class="n">user_data</span><span class="p">[</span><span class="s2">&quot;purchase&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">price</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">chat_id</span><span class="o">=</span><span class="n">update</span><span class="o">.</span><span class="n">effective_chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">reply_markup</span><span class="o">=</span><span class="n">reply_markup</span><span class="p">,</span>
+                                           <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Price of purchase must be positive&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">ConversationHandler</span><span class="o">.</span><span class="n">END</span>
+        <span class="n">db</span><span class="o">.</span><span class="n">add_purchase</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">user_data</span><span class="p">[</span><span class="s2">&quot;purchase&quot;</span><span class="p">])</span>
+        <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">chat_id</span><span class="o">=</span><span class="n">update</span><span class="o">.</span><span class="n">effective_chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">reply_markup</span><span class="o">=</span><span class="n">reply_markup</span><span class="p">,</span>
+                                       <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Purchase successful added&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">chat_id</span><span class="o">=</span><span class="n">update</span><span class="o">.</span><span class="n">effective_chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">reply_markup</span><span class="o">=</span><span class="n">reply_markup</span><span class="p">,</span>
+                                       <span class="n">text</span><span class="o">=</span><span class="s2">&quot;You must enter number&quot;</span><span class="p">)</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ConversationHandler</span><span class="o">.</span><span class="n">END</span></div>
+
 
 <div class="viewcode-block" id="build_menu"><a class="viewcode-back" href="../../TelegramBot.html#TelegramBot.handlers.build_menu">[docs]</a><span class="k">def</span> <span class="nf">build_menu</span><span class="p">(</span><span class="n">buttons</span><span class="p">,</span> <span class="n">n_cols</span><span class="p">,</span>
                <span class="n">header_buttons</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                <span class="n">footer_buttons</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function to create button menu</span>
+<span class="sd">    :param buttons: massive of string with buttons text</span>
+<span class="sd">    :param n_cols: count of columns</span>
+<span class="sd">    :param header_buttons:</span>
+<span class="sd">    :param footer_buttons:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">menu</span> <span class="o">=</span> <span class="p">[</span><span class="n">buttons</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span> <span class="o">+</span> <span class="n">n_cols</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">buttons</span><span class="p">),</span> <span class="n">n_cols</span><span class="p">)]</span>
     <span class="k">if</span> <span class="n">header_buttons</span><span class="p">:</span>
         <span class="n">menu</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">[</span><span class="n">header_buttons</span><span class="p">])</span>
@@ -159,7 +256,214 @@
     <span class="k">return</span> <span class="n">menu</span></div>
 
 
+<div class="viewcode-block" id="data_conversion"><a class="viewcode-back" href="../../TelegramBot.html#TelegramBot.handlers.data_conversion">[docs]</a><span class="k">def</span> <span class="nf">data_conversion</span><span class="p">(</span><span class="n">spendings_category</span><span class="p">,</span> <span class="n">spendings_price</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts the information from the database into a dictionary</span>
+<span class="sd">    :param spendings_category: categories of goods on request in the database</span>
+<span class="sd">    :param spendings_price: price of goods on request in the database</span>
+<span class="sd">    :return: converted data</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">spendings_price_category</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">unique_spendings_category</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">spendings_category</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">unique_spendings_category</span><span class="p">)):</span>
+        <span class="n">spendings_price_category</span><span class="p">[</span><span class="n">unique_spendings_category</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">spendings_price</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">unique_spendings_category</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">spendings_category</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="n">spendings_price_category</span><span class="p">[</span><span class="n">unique_spendings_category</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span> <span class="o">+=</span> <span class="n">spendings_price</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">spendings_price_category</span></div>
 
+
+<div class="viewcode-block" id="get_spending_period"><a class="viewcode-back" href="../../TelegramBot.html#TelegramBot.handlers.get_spending_period">[docs]</a><span class="k">def</span> <span class="nf">get_spending_period</span><span class="p">(</span><span class="n">family_id</span><span class="p">,</span> <span class="n">period</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Getting information about period expenses by category and family members</span>
+<span class="sd">    :param family_id: id of family</span>
+<span class="sd">    :param period: getting information for the day, week or month</span>
+<span class="sd">    :return: the message that the bot will display</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">period</span> <span class="o">==</span> <span class="s1">&#39;Month&#39;</span><span class="p">:</span>
+        <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="n">now</span> <span class="o">=</span> <span class="n">now</span><span class="o">.</span><span class="n">month</span>
+    <span class="k">elif</span> <span class="n">period</span> <span class="o">==</span> <span class="s1">&#39;Week&#39;</span><span class="p">:</span>
+        <span class="n">is_sunday</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">today</span><span class="p">()</span><span class="o">.</span><span class="n">weekday</span><span class="p">()</span>
+        <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
+        <span class="n">now</span> <span class="o">=</span> <span class="n">now</span><span class="o">.</span><span class="n">isocalendar</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">is_sunday</span> <span class="o">==</span> <span class="mi">6</span><span class="p">:</span>
+            <span class="n">now</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">elif</span> <span class="n">period</span> <span class="o">==</span> <span class="s1">&#39;Day&#39;</span><span class="p">:</span>
+        <span class="n">now</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="n">now</span> <span class="o">=</span> <span class="n">now</span><span class="o">.</span><span class="n">day</span>
+    <span class="n">spendings_member</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_period_members</span><span class="p">(</span><span class="n">period</span><span class="p">,</span> <span class="n">now</span><span class="p">,</span> <span class="n">family_id</span><span class="p">)</span>
+    <span class="n">unique_spendings_member</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">spendings_member</span><span class="p">))</span>
+    <span class="n">members</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">unique_spendings_member</span><span class="p">)</span><span class="o">!=</span><span class="mi">0</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">unique_spendings_member</span><span class="p">)):</span>
+            <span class="n">spendings_price</span><span class="p">,</span> <span class="n">spendings_category</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_spend_member</span><span class="p">(</span><span class="n">period</span><span class="p">,</span> <span class="n">now</span><span class="p">,</span> <span class="n">unique_spendings_member</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">family_id</span><span class="p">)</span>
+            <span class="n">spendings_price_category</span> <span class="o">=</span> <span class="n">data_conversion</span><span class="p">(</span><span class="n">spendings_category</span><span class="p">,</span> <span class="n">spendings_price</span><span class="p">)</span>
+            <span class="n">members</span><span class="p">[</span><span class="n">unique_spendings_member</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">spendings_price_category</span>
+        <span class="n">spendings_price</span><span class="p">,</span> <span class="n">spendings_category</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_spend</span><span class="p">(</span><span class="n">period</span><span class="p">,</span> <span class="n">now</span><span class="p">,</span> <span class="n">family_id</span><span class="p">)</span>
+        <span class="n">spendings_price_category</span> <span class="o">=</span> <span class="n">data_conversion</span><span class="p">(</span><span class="n">spendings_category</span><span class="p">,</span> <span class="n">spendings_price</span><span class="p">)</span>
+        <span class="n">purchase</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;This </span><span class="si">{</span><span class="n">period</span><span class="si">}</span><span class="s1"> you made purchases in the following categories:</span><span class="se">\n\n</span><span class="s1">&#39;</span>
+        <span class="n">result</span> <span class="o">+=</span> <span class="n">purchase</span>
+        <span class="n">get_plot_category</span><span class="p">(</span><span class="n">spendings_price_category</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">category</span> <span class="ow">in</span> <span class="n">spendings_price_category</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">purchase</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">category</span><span class="si">}</span><span class="s1">: for the amount of </span><span class="si">{</span><span class="n">spendings_price_category</span><span class="p">[</span><span class="n">category</span><span class="p">]</span><span class="si">}</span><span class="s1"> rubles </span><span class="se">\n\n</span><span class="s1">&#39;</span>
+            <span class="n">result</span> <span class="o">+=</span> <span class="n">purchase</span>
+        <span class="n">result</span> <span class="o">+=</span> <span class="s2">&quot;=================================</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+        <span class="n">get_plot_members</span><span class="p">(</span><span class="n">members</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">member</span> <span class="ow">in</span> <span class="n">members</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">purchase</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;User </span><span class="si">{</span><span class="n">member</span><span class="si">}</span><span class="s1"> made purchases this </span><span class="si">{</span><span class="n">period</span><span class="si">}</span><span class="s1"> in the following categories:</span><span class="se">\n\n</span><span class="s1">&#39;</span>
+            <span class="n">result</span> <span class="o">+=</span> <span class="n">purchase</span>
+            <span class="k">for</span> <span class="n">category</span> <span class="ow">in</span> <span class="n">members</span><span class="p">[</span><span class="n">member</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">purchase</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">category</span><span class="si">}</span><span class="s1"> category for the amount of </span><span class="si">{</span><span class="n">members</span><span class="p">[</span><span class="n">member</span><span class="p">][</span><span class="n">category</span><span class="p">]</span><span class="si">}</span><span class="s1"> rubles </span><span class="se">\n</span><span class="s1"> </span><span class="se">\n</span><span class="s1">&#39;</span>
+                <span class="n">result</span> <span class="o">+=</span> <span class="n">purchase</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="get_plot_category"><a class="viewcode-back" href="../../TelegramBot.html#TelegramBot.handlers.get_plot_category">[docs]</a><span class="k">def</span> <span class="nf">get_plot_category</span><span class="p">(</span><span class="n">spendings_price_category</span><span class="p">):</span>
+    <span class="n">spendings_price_category_keys</span> <span class="o">=</span> <span class="n">spendings_price_category</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+    <span class="n">spendings_price_category_values</span> <span class="o">=</span> <span class="n">spendings_price_category</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+    <span class="n">fig1</span><span class="p">,</span> <span class="n">ax1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+
+    <span class="n">wedges</span><span class="p">,</span> <span class="n">texts</span><span class="p">,</span> <span class="n">autotexts</span> <span class="o">=</span> <span class="n">ax1</span><span class="o">.</span><span class="n">pie</span><span class="p">(</span><span class="n">spendings_price_category_values</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">spendings_price_category_keys</span><span class="p">,</span>
+                                       <span class="n">autopct</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%1.2f%%</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;saved_figure.png&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_plot_members"><a class="viewcode-back" href="../../TelegramBot.html#TelegramBot.handlers.get_plot_members">[docs]</a><span class="k">def</span> <span class="nf">get_plot_members</span><span class="p">(</span><span class="n">members</span><span class="p">):</span>
+    <span class="n">members_keys</span> <span class="o">=</span> <span class="n">members</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+    <span class="n">members_values</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">member_spend</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">member</span> <span class="ow">in</span> <span class="n">members</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">category</span> <span class="ow">in</span> <span class="n">members</span><span class="p">[</span><span class="n">member</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">member_spend</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">(</span><span class="n">members</span><span class="p">[</span><span class="n">member</span><span class="p">][</span><span class="n">category</span><span class="p">])</span>
+        <span class="n">members_values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">member_spend</span><span class="p">)</span>
+        <span class="n">member_spend</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">fig1</span><span class="p">,</span> <span class="n">ax1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+    <span class="n">wedges</span><span class="p">,</span> <span class="n">texts</span><span class="p">,</span> <span class="n">autotexts</span> <span class="o">=</span> <span class="n">ax1</span><span class="o">.</span><span class="n">pie</span><span class="p">(</span><span class="n">members_values</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">members_keys</span><span class="p">,</span> <span class="n">autopct</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%1.2f%%</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">ax1</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;saved_figure1.png&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="choose_period"><a class="viewcode-back" href="../../TelegramBot.html#TelegramBot.handlers.choose_period">[docs]</a><span class="k">async</span> <span class="k">def</span> <span class="nf">choose_period</span><span class="p">(</span><span class="n">update</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Select the period for which you want to display information</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">family_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_family_id</span><span class="p">(</span><span class="n">update</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">username</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">family_id</span><span class="p">:</span>
+        <span class="n">period_types</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">KeyboardButton</span><span class="p">(</span><span class="s2">&quot;Month&quot;</span><span class="p">),</span>
+            <span class="n">KeyboardButton</span><span class="p">(</span><span class="s2">&quot;Week&quot;</span><span class="p">),</span>
+            <span class="n">KeyboardButton</span><span class="p">(</span><span class="s2">&quot;Day&quot;</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="n">reply_markup</span> <span class="o">=</span> <span class="n">ReplyKeyboardMarkup</span><span class="p">(</span><span class="n">build_menu</span><span class="p">(</span><span class="n">period_types</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">one_time_keyboard</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">chat_id</span><span class="o">=</span><span class="n">update</span><span class="o">.</span><span class="n">effective_chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                                       <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Choose period&quot;</span><span class="p">,</span> <span class="n">reply_markup</span><span class="o">=</span><span class="n">reply_markup</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="s2">&quot;You are not a member of the family. Add to or start a family.&quot;</span>
+        <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">chat_id</span><span class="o">=</span><span class="n">update</span><span class="o">.</span><span class="n">effective_chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                                       <span class="n">text</span><span class="o">=</span><span class="n">result</span><span class="p">)</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="get_spending"><a class="viewcode-back" href="../../TelegramBot.html#TelegramBot.handlers.get_spending">[docs]</a><span class="k">async</span> <span class="k">def</span> <span class="nf">get_spending</span><span class="p">(</span><span class="n">update</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Getting information for a certain period and outputting it</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">family_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_family_id</span><span class="p">(</span><span class="n">update</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">username</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">get_spending_period</span><span class="p">(</span><span class="n">family_id</span><span class="p">,</span> <span class="n">update</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+    <span class="n">reply_markup1</span> <span class="o">=</span> <span class="n">ReplyKeyboardMarkup</span><span class="p">(</span><span class="n">build_menu</span><span class="p">(</span><span class="n">main_functions</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">one_time_keyboard</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">chat_id</span><span class="o">=</span><span class="n">update</span><span class="o">.</span><span class="n">effective_chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                                       <span class="n">text</span><span class="o">=</span><span class="n">result</span><span class="p">)</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;await context.bot.send_media_group(chat_id=update.effective_chat.id,</span>
+<span class="sd">                                           media=[types.InputMediaPhoto(open(&#39;saved_figure.png&#39;, &#39;rb&#39;)),</span>
+<span class="sd">                                                  types.InputMediaPhoto(open(&#39;saved_figure1.png&#39;, &#39;rb&#39;))],</span>
+<span class="sd">                                           )&#39;&#39;&#39;</span>
+        <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">send_photo</span><span class="p">(</span><span class="n">chat_id</span><span class="o">=</span><span class="n">update</span><span class="o">.</span><span class="n">effective_chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                                       <span class="n">photo</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;saved_figure.png&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">),</span>
+                                     <span class="n">caption</span><span class="o">=</span><span class="s2">&quot;Chart of spending by category:&quot;</span><span class="p">)</span>
+        <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">send_photo</span><span class="p">(</span><span class="n">chat_id</span><span class="o">=</span><span class="n">update</span><span class="o">.</span><span class="n">effective_chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                                     <span class="n">photo</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;saved_figure1.png&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">),</span>
+                                     <span class="n">caption</span><span class="o">=</span><span class="s2">&quot;Chart of spending by members:&quot;</span><span class="p">,</span>
+                                     <span class="n">reply_markup</span><span class="o">=</span><span class="n">reply_markup1</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;saved_figure.png&#39;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="s1">&#39;saved_figure1.png&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">chat_id</span><span class="o">=</span><span class="n">update</span><span class="o">.</span><span class="n">effective_chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">reply_markup</span><span class="o">=</span><span class="n">reply_markup1</span><span class="p">,</span>
+                                       <span class="n">text</span><span class="o">=</span><span class="s2">&quot;You didn&#39;t spend anything during this period&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ConversationHandler</span><span class="o">.</span><span class="n">END</span></div>
+
+
+<div class="viewcode-block" id="login_to_family"><a class="viewcode-back" href="../../TelegramBot.html#TelegramBot.handlers.login_to_family">[docs]</a><span class="k">async</span> <span class="k">def</span> <span class="nf">login_to_family</span><span class="p">(</span><span class="n">update</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Handler to create family</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">context</span><span class="o">.</span><span class="n">user_data</span><span class="p">[</span><span class="s2">&quot;family&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">FamilyInfo</span><span class="p">()</span>
+    <span class="n">user_has_family</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">user_has_family</span><span class="p">(</span><span class="n">update</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">username</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">user_has_family</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">chat_id</span><span class="o">=</span><span class="n">update</span><span class="o">.</span><span class="n">effective_chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                                       <span class="n">text</span><span class="o">=</span><span class="s2">&quot;You already has family. Leave from other family to enter in new&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ConversationHandler</span><span class="o">.</span><span class="n">END</span>
+    <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">chat_id</span><span class="o">=</span><span class="n">update</span><span class="o">.</span><span class="n">effective_chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Enter family login&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="mi">1</span></div>
+
+
+<div class="viewcode-block" id="family_login_to_enter"><a class="viewcode-back" href="../../TelegramBot.html#TelegramBot.handlers.family_login_to_enter">[docs]</a><span class="k">async</span> <span class="k">def</span> <span class="nf">family_login_to_enter</span><span class="p">(</span><span class="n">update</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Handler to get family login when enter in family</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">context</span><span class="o">.</span><span class="n">user_data</span><span class="p">[</span><span class="s2">&quot;family&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">login</span> <span class="o">=</span> <span class="n">update</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">text</span>
+    <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">chat_id</span><span class="o">=</span><span class="n">update</span><span class="o">.</span><span class="n">effective_chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Enter password&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="mi">2</span></div>
+
+
+<div class="viewcode-block" id="family_password_to_enter"><a class="viewcode-back" href="../../TelegramBot.html#TelegramBot.handlers.family_password_to_enter">[docs]</a><span class="k">async</span> <span class="k">def</span> <span class="nf">family_password_to_enter</span><span class="p">(</span><span class="n">update</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Handler to get family password when enter in family</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">username</span> <span class="o">=</span> <span class="n">update</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">username</span>
+    <span class="n">context</span><span class="o">.</span><span class="n">user_data</span><span class="p">[</span><span class="s2">&quot;family&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="n">update</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">text</span>
+    <span class="n">data_is_correct</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">check_family_data_to_enter</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">user_data</span><span class="p">[</span><span class="s2">&quot;family&quot;</span><span class="p">],</span> <span class="n">username</span><span class="p">)</span>
+    <span class="n">reply_markup1</span> <span class="o">=</span> <span class="n">ReplyKeyboardMarkup</span><span class="p">(</span><span class="n">build_menu</span><span class="p">(</span><span class="n">main_functions</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">one_time_keyboard</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">reply_markup2</span> <span class="o">=</span> <span class="n">ReplyKeyboardMarkup</span><span class="p">(</span><span class="n">build_menu</span><span class="p">(</span><span class="n">create_or_login_to_family</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">one_time_keyboard</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">data_is_correct</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">chat_id</span><span class="o">=</span><span class="n">update</span><span class="o">.</span><span class="n">effective_chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">reply_markup</span><span class="o">=</span><span class="n">reply_markup1</span><span class="p">,</span>
+                                       <span class="n">text</span><span class="o">=</span><span class="s2">&quot;You successful enter to family&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">chat_id</span><span class="o">=</span><span class="n">update</span><span class="o">.</span><span class="n">effective_chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">reply_markup</span><span class="o">=</span><span class="n">reply_markup2</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;Invalid login or password&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ConversationHandler</span><span class="o">.</span><span class="n">END</span></div>
+
+
+<div class="viewcode-block" id="leave_from_family"><a class="viewcode-back" href="../../TelegramBot.html#TelegramBot.handlers.leave_from_family">[docs]</a><span class="k">async</span> <span class="k">def</span> <span class="nf">leave_from_family</span><span class="p">(</span><span class="n">update</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Handler to leave from family</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">username</span> <span class="o">=</span> <span class="n">update</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">username</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">leave_family</span><span class="p">(</span><span class="n">username</span><span class="p">)</span>
+    <span class="n">reply_markup2</span> <span class="o">=</span> <span class="n">ReplyKeyboardMarkup</span><span class="p">(</span><span class="n">build_menu</span><span class="p">(</span><span class="n">create_or_login_to_family</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">one_time_keyboard</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">chat_id</span><span class="o">=</span><span class="n">update</span><span class="o">.</span><span class="n">effective_chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">reply_markup</span><span class="o">=</span><span class="n">reply_markup2</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="s2">&quot;You successful leave from family&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">chat_id</span><span class="o">=</span><span class="n">update</span><span class="o">.</span><span class="n">effective_chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">reply_markup</span><span class="o">=</span><span class="n">reply_markup2</span><span class="p">,</span>
+                                       <span class="n">text</span><span class="o">=</span><span class="s2">&quot;You are not a member of the family, therefore you cannot leave it&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="get_members"><a class="viewcode-back" href="../../TelegramBot.html#TelegramBot.handlers.get_members">[docs]</a><span class="k">async</span> <span class="k">def</span> <span class="nf">get_members</span><span class="p">(</span><span class="n">update</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+    <span class="n">family_id</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_family_id</span><span class="p">(</span><span class="n">update</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">username</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">family_name</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_family_name</span><span class="p">(</span><span class="n">family_id</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">usernames</span><span class="p">,</span> <span class="n">nicknames</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">get_members</span><span class="p">(</span><span class="n">family_id</span><span class="p">)</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Family </span><span class="si">{</span><span class="n">family_name</span><span class="si">}</span><span class="s1">: </span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">usernames</span><span class="p">)):</span>
+        <span class="n">result</span> <span class="o">+=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">usernames</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s1"> - </span><span class="si">{</span><span class="n">nicknames</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s1"> </span><span class="se">\n</span><span class="s1">&#39;</span>
+    <span class="n">reply_markup2</span> <span class="o">=</span> <span class="n">ReplyKeyboardMarkup</span><span class="p">(</span><span class="n">build_menu</span><span class="p">(</span><span class="n">main_functions</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">one_time_keyboard</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">await</span> <span class="n">context</span><span class="o">.</span><span class="n">bot</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="n">chat_id</span><span class="o">=</span><span class="n">update</span><span class="o">.</span><span class="n">effective_chat</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="n">result</span><span class="p">,</span> <span class="n">reply_markup</span><span class="o">=</span><span class="n">reply_markup2</span><span class="p">)</span></div>
 </pre></div>
 
           </div>

@@ -3,13 +3,15 @@ Module for command handlers
 """
 from telegram import Update, KeyboardButton, ReplyKeyboardMarkup
 from telegram.ext import ContextTypes, ConversationHandler
-import db
+import TelegramBot.db as db
 import datetime
 import matplotlib.pyplot as plt
 import os
 '''import telebot
 from telebot import types'''
 
+def __init__():
+    pass
 
 class FamilyInfo:
     def __init__(self):
@@ -27,11 +29,11 @@ class PurchaseData:
         self.family_id = -1
 
 
-register_button = ["Registration"]
+register_button = ["📃 Registration"]
 
-create_or_login_to_family = ["Create new family", "Join to family"]
+create_or_login_to_family = ["👨‍👩‍👧‍👦Create new family", "🚪 Join to family"]
 
-main_functions = ["Add purchase", "Get statistics", "Leave from family", "Get family members"]
+main_functions = ["💵 Add purchase", "📊 Get statistics", "🚪 Leave from family", "📜 Get family members"]
 
 
 
@@ -186,13 +188,21 @@ async def save_purchase(update, context):
     """
         Handler to save purchase
     """
-    context.user_data["purchase"].price = int(update.message.text)
-    db.add_purchase(context.user_data["purchase"])
     reply_markup = ReplyKeyboardMarkup(build_menu(main_functions, 3), one_time_keyboard=True)
-    await context.bot.send_message(chat_id=update.effective_chat.id, reply_markup=reply_markup,
-                                   text="Purchase successful added")
-
-    return ConversationHandler.END
+    try:
+        context.user_data["purchase"].price = int(update.message.text)
+        if context.user_data["purchase"].price <= 0:
+            await context.bot.send_message(chat_id=update.effective_chat.id, reply_markup=reply_markup,
+                                           text="Price of purchase must be positive")
+            return ConversationHandler.END
+        db.add_purchase(context.user_data["purchase"])
+        await context.bot.send_message(chat_id=update.effective_chat.id, reply_markup=reply_markup,
+                                       text="Purchase successful added")
+    except ValueError:
+        await context.bot.send_message(chat_id=update.effective_chat.id, reply_markup=reply_markup,
+                                       text="You must enter number")
+    finally:
+        return ConversationHandler.END
 
 
 def build_menu(buttons, n_cols,
@@ -420,4 +430,5 @@ async def get_members(update, context):
     result = f'Family {family_name}: \n'
     for i in range(len(usernames)):
         result += f'{usernames[i]} - {nicknames[i]} \n'
-    await context.bot.send_message(chat_id=update.effective_chat.id, text=result)
+    reply_markup2 = ReplyKeyboardMarkup(build_menu(main_functions, 3), one_time_keyboard=True)
+    await context.bot.send_message(chat_id=update.effective_chat.id, text=result, reply_markup=reply_markup2)

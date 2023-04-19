@@ -5,4 +5,3 @@ Bot
    :maxdepth: 4
 
    TelegramBot
-   setup

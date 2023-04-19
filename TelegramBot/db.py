@@ -7,7 +7,10 @@ import MySQLdb
 import json
 
 
-with open("./config.json") as json_data:
+def __init__():
+    pass
+
+with open("../config.json") as json_data:
     data = json.load(json_data)
 
 def connect_db():
@@ -212,7 +215,7 @@ def check_family_data_to_enter(family_data, username):
     x = conn.cursor()
     try:
         family_id = x.execute(f'select Id from family where Login="{family_data.login}" and Pass="{family_data.password}" ')
-        if family_id is None:
+        if family_id is None or family_id == 0:
             return False
         else:
             x.execute(
@@ -248,10 +251,16 @@ def leave_family(username):
     conn.close()
     return False
 
+
 def get_members(family_id):
+    '''
+    Get list of tuples (member_name, member_tg_id)
+    :param family_id: family id
+    :return:
+    '''
     conn = connect_db()
     username_req = f'select UserName from familymember where FamilyId="{family_id}"'
     nickname_req = f'select TelegramId from familymember where FamilyId="{family_id}"'
-    username = execute_read_query(conn, username_req)[0]
-    nickname = execute_read_query(conn, nickname_req)[0]
+    username = [t[0] for t in execute_read_query(conn, username_req)]
+    nickname = [t[0] for t in execute_read_query(conn, nickname_req)]
     return username, nickname

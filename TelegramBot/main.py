@@ -1,17 +1,21 @@
+"""
+ This is module bot configuration
+"""
 import logging
 import json
 from telegram.ext import filters, ApplicationBuilder, CommandHandler, MessageHandler, ConversationHandler
-
-import handlers
+import TelegramBot.handlers as handlers
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     level=logging.INFO
 )
 
-
-if __name__ == '__main__':
-    with open("./config.json") as json_data:
+def config_bot():
+    """
+    Commands and configs of telegram bot
+    """
+    with open("../config.json") as json_data:
         data = json.load(json_data)
 
     application = ApplicationBuilder().token(data["Token"]).build()
@@ -107,3 +111,6 @@ if __name__ == '__main__':
 
 
     application.run_polling()
+
+if __name__ == '__main__':
+    config_bot()

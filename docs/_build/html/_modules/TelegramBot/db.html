@@ -39,6 +39,9 @@
 <span class="kn">import</span> <span class="nn">json</span>
 
 
+<span class="k">def</span> <span class="fm">__init__</span><span class="p">():</span>
+    <span class="k">pass</span>
+
 <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;../config.json&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">json_data</span><span class="p">:</span>
     <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">json_data</span><span class="p">)</span>
 
@@ -63,7 +66,8 @@
     <span class="k">try</span><span class="p">:</span>
         <span class="n">x</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;insert familymember(UserName, TelegramId) values (&quot;</span><span class="si">{</span><span class="n">user_name</span><span class="si">}</span><span class="s1">&quot;, &quot;</span><span class="si">{</span><span class="n">telegram_id</span><span class="si">}</span><span class="s1">&quot;)&#39;</span><span class="p">)</span>
         <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
-    <span class="k">except</span><span class="p">:</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
         <span class="n">conn</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
     <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
@@ -78,8 +82,8 @@
     <span class="n">x</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">x</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;select * from family where Login = &quot;</span><span class="si">{</span><span class="n">login</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">fetchall</span><span class="p">())</span>
-        <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
             <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
     <span class="k">except</span><span class="p">:</span>
@@ -92,38 +96,40 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Сhecks the user&#39;s family status</span>
 <span class="sd">    :param username: name of user</span>
-<span class="sd">    :return: -1 :</span>
+<span class="sd">    :return: -1 : user has family, 0 : user without family</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">conn</span> <span class="o">=</span> <span class="n">connect_db</span><span class="p">()</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">x</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;select * from familymember where TelegramId = &quot;</span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
-        <span class="n">x</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;select FamilyId from familymember where TelegramId = &quot;</span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="s2">&quot;None&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">x</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="mi">0</span>
+        <span class="k">else</span> <span class="p">:</span>
             <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-            <span class="k">return</span> <span class="o">-</span><span class="mi">2</span>
-    <span class="k">except</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">1</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
         <span class="n">conn</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
     <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-    <span class="k">return</span> <span class="mi">0</span></div>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span></div>
 
 
 <div class="viewcode-block" id="add_family"><a class="viewcode-back" href="../../TelegramBot.html#TelegramBot.db.add_family">[docs]</a><span class="k">def</span> <span class="nf">add_family</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">username</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    :param params:</span>
-<span class="sd">    :param username:</span>
+<span class="sd">    Add family info to database</span>
+<span class="sd">    :param params: FamilyInfo object</span>
+<span class="sd">    :param username: telegram id of user</span>
 <span class="sd">    :return:</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">conn</span> <span class="o">=</span> <span class="n">connect_db</span><span class="p">()</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
     <span class="k">try</span><span class="p">:</span>
 
-        <span class="n">x</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;insert family(Login, Pass, FamilyName) values (&quot;</span><span class="si">{</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">&quot;, &quot;</span><span class="si">{</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&quot;, &quot;</span><span class="si">{</span><span class="n">params</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s1">&quot; )&#39;</span><span class="p">)</span>
+        <span class="n">x</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;insert family(Login, Pass, FamilyName) values (&quot;</span><span class="si">{</span><span class="n">params</span><span class="o">.</span><span class="n">login</span><span class="si">}</span><span class="s1">&quot;, &quot;</span><span class="si">{</span><span class="n">params</span><span class="o">.</span><span class="n">password</span><span class="si">}</span><span class="s1">&quot;, &quot;</span><span class="si">{</span><span class="n">params</span><span class="o">.</span><span class="n">family_name</span><span class="si">}</span><span class="s1">&quot; )&#39;</span><span class="p">)</span>
         <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
-        <span class="n">x</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;update familymember set FamilyId = (select Id from family where Login = &quot;</span><span class="si">{</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">&quot;) where TelegramId = &quot;</span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
+        <span class="n">x</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;update familymember set FamilyId = (select Id from family where Login = &quot;</span><span class="si">{</span><span class="n">params</span><span class="o">.</span><span class="n">login</span><span class="si">}</span><span class="s1">&quot;) where TelegramId = &quot;</span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
         <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
     <span class="k">except</span><span class="p">:</span>
         <span class="n">conn</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
@@ -131,6 +137,11 @@
     <span class="k">return</span> <span class="mi">0</span></div>
 
 <div class="viewcode-block" id="get_family_id"><a class="viewcode-back" href="../../TelegramBot.html#TelegramBot.db.get_family_id">[docs]</a><span class="k">def</span> <span class="nf">get_family_id</span><span class="p">(</span><span class="n">user_id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Search family id by user telegram id</span>
+<span class="sd">    :param user_id: telegram id of user</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">conn</span> <span class="o">=</span> <span class="n">connect_db</span><span class="p">()</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
     <span class="k">try</span><span class="p">:</span>
@@ -140,12 +151,31 @@
         <span class="n">conn</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
     <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 
-
-<div class="viewcode-block" id="add_purchase"><a class="viewcode-back" href="../../TelegramBot.html#TelegramBot.db.add_purchase">[docs]</a><span class="k">def</span> <span class="nf">add_purchase</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+<div class="viewcode-block" id="get_family_name"><a class="viewcode-back" href="../../TelegramBot.html#TelegramBot.db.get_family_name">[docs]</a><span class="k">def</span> <span class="nf">get_family_name</span><span class="p">(</span><span class="n">family_id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Search family name by user telegram id</span>
+<span class="sd">    :param family_id: id of family</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">conn</span> <span class="o">=</span> <span class="n">connect_db</span><span class="p">()</span>
     <span class="n">x</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
     <span class="k">try</span><span class="p">:</span>
-        <span class="n">x</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;insert purchase(BuyDate, MemberId, FamilyId, BuyType, Price) values (&quot;</span><span class="si">{</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s1">&quot;, &quot;</span><span class="si">{</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&quot;, &quot;</span><span class="si">{</span><span class="n">params</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s1">&quot;, &quot;</span><span class="si">{</span><span class="n">params</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="si">}</span><span class="s1">&quot;, &quot;</span><span class="si">{</span><span class="n">params</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="si">}</span><span class="s1">&quot; )&#39;</span><span class="p">)</span>
+        <span class="n">x</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;select FamilyName from family where Id=&quot;</span><span class="si">{</span><span class="n">family_id</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+    <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="add_purchase"><a class="viewcode-back" href="../../TelegramBot.html#TelegramBot.db.add_purchase">[docs]</a><span class="k">def</span> <span class="nf">add_purchase</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Method to add purchase in database</span>
+<span class="sd">    :param params: PurchaseData object</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">conn</span> <span class="o">=</span> <span class="n">connect_db</span><span class="p">()</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">x</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;insert purchase(BuyDate, MemberId, FamilyId, BuyType, Price) values (&quot;</span><span class="si">{</span><span class="n">params</span><span class="o">.</span><span class="n">buy_date</span><span class="si">}</span><span class="s1">&quot;, &quot;</span><span class="si">{</span><span class="n">params</span><span class="o">.</span><span class="n">member_id</span><span class="si">}</span><span class="s1">&quot;, &quot;</span><span class="si">{</span><span class="n">params</span><span class="o">.</span><span class="n">family_id</span><span class="si">}</span><span class="s1">&quot;, &quot;</span><span class="si">{</span><span class="n">params</span><span class="o">.</span><span class="n">buy_type</span><span class="si">}</span><span class="s1">&quot;, &quot;</span><span class="si">{</span><span class="n">params</span><span class="o">.</span><span class="n">price</span><span class="si">}</span><span class="s1">&quot; )&#39;</span><span class="p">)</span>
         <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
     <span class="k">except</span><span class="p">:</span>
         <span class="n">conn</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
@@ -207,6 +237,65 @@
     <span class="n">spendings_price</span> <span class="o">=</span> <span class="n">execute_read_query</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">select_spendings_price</span><span class="p">)</span>
     <span class="n">spendings_category</span> <span class="o">=</span> <span class="n">execute_read_query</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">select_spendings_category</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">spendings_price</span><span class="p">,</span> <span class="n">spendings_category</span></div>
+
+
+<div class="viewcode-block" id="check_family_data_to_enter"><a class="viewcode-back" href="../../TelegramBot.html#TelegramBot.db.check_family_data_to_enter">[docs]</a><span class="k">def</span> <span class="nf">check_family_data_to_enter</span><span class="p">(</span><span class="n">family_data</span><span class="p">,</span> <span class="n">username</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check family data from user</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">conn</span> <span class="o">=</span> <span class="n">connect_db</span><span class="p">()</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">family_id</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;select Id from family where Login=&quot;</span><span class="si">{</span><span class="n">family_data</span><span class="o">.</span><span class="n">login</span><span class="si">}</span><span class="s1">&quot; and Pass=&quot;</span><span class="si">{</span><span class="n">family_data</span><span class="o">.</span><span class="n">password</span><span class="si">}</span><span class="s1">&quot; &#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">family_id</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">family_id</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">x</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;update familymember set FamilyId = (select Id from family where Login=&quot;</span><span class="si">{</span><span class="n">family_data</span><span class="o">.</span><span class="n">login</span><span class="si">}</span><span class="s1">&quot; and Pass=&quot;</span><span class="si">{</span><span class="n">family_data</span><span class="o">.</span><span class="n">password</span><span class="si">}</span><span class="s1">&quot; ) where TelegramId = &quot;</span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
+            <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+            <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="n">Error</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+    <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="leave_family"><a class="viewcode-back" href="../../TelegramBot.html#TelegramBot.db.leave_family">[docs]</a><span class="k">def</span> <span class="nf">leave_family</span><span class="p">(</span><span class="n">username</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Delete foreign key about family</span>
+<span class="sd">    :param username:</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">conn</span> <span class="o">=</span> <span class="n">connect_db</span><span class="p">()</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">family_id</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s1">&#39;select FamilyId from familymember where TelegramId=&quot;</span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">family_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">x</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;update familymember set FamilyId = NULL where TelegramId = &quot;</span><span class="si">{</span><span class="n">username</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
+            <span class="n">conn</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+            <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="n">Error</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">rollback</span><span class="p">()</span>
+    <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="get_members"><a class="viewcode-back" href="../../TelegramBot.html#TelegramBot.db.get_members">[docs]</a><span class="k">def</span> <span class="nf">get_members</span><span class="p">(</span><span class="n">family_id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Get list of tuples (member_name, member_tg_id)</span>
+<span class="sd">    :param family_id: family id</span>
+<span class="sd">    :return:</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">conn</span> <span class="o">=</span> <span class="n">connect_db</span><span class="p">()</span>
+    <span class="n">username_req</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;select UserName from familymember where FamilyId=&quot;</span><span class="si">{</span><span class="n">family_id</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
+    <span class="n">nickname_req</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;select TelegramId from familymember where FamilyId=&quot;</span><span class="si">{</span><span class="n">family_id</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
+    <span class="n">username</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">execute_read_query</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">username_req</span><span class="p">)]</span>
+    <span class="n">nickname</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">execute_read_query</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">nickname_req</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="n">username</span><span class="p">,</span> <span class="n">nickname</span></div>
 </pre></div>
 
           </div>
