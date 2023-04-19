@@ -42,4 +42,4 @@ This application will help you and your family to effectively monitor their fina
     ```cmd
     alembic upgrade head
     ```
-## [See documentation here](./docs/_build/html/index.html)
+## [See documentation here](https://vitaliy985.github.io/TelegramBot/)
