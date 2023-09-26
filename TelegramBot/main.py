@@ -4,7 +4,7 @@
 import logging
 import json
 from telegram.ext import filters, ApplicationBuilder, CommandHandler, MessageHandler, ConversationHandler
-import TelegramBot.handlers as handlers
+import handlers as handlers
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -15,7 +15,7 @@ def config_bot():
     """
     Commands and configs of telegram bot
     """
-    with open("../config.json") as json_data:
+    with open("./config.json") as json_data:
         data = json.load(json_data)
 
     application = ApplicationBuilder().token(data["Token"]).build()

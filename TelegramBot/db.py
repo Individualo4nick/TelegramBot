@@ -5,12 +5,14 @@ from aifc import Error
 
 import MySQLdb
 import json
+import pytest
+import unittest.mock
 
 
 def __init__():
     pass
 
-with open("../config.json") as json_data:
+with open("./config.json") as json_data:
     data = json.load(json_data)
 
 def connect_db():
@@ -22,7 +24,6 @@ def connect_db():
                            user=data["ConnectionString"]["user"],
                            password=data["ConnectionString"]["password"],
                            database=data["ConnectionString"]["database"])
-
 def register(user_name, telegram_id):
     """
     Function for user registration
@@ -256,7 +257,7 @@ def get_members(family_id):
     '''
     Get list of tuples (member_name, member_tg_id)
     :param family_id: family id
-    :return:
+    :return username, nickname: username and telegram id
     '''
     conn = connect_db()
     username_req = f'select UserName from familymember where FamilyId="{family_id}"'

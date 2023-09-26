@@ -261,6 +261,8 @@ def get_spending_period(family_id, period):
     elif period == 'Day':
         now = datetime.datetime.now()
         now = now.day
+    else:
+        return "Unable to view information for this period"
     spendings_member = db.get_period_members(period, now, family_id)
     unique_spendings_member = tuple(set(spendings_member))
     members = {}
@@ -275,7 +277,7 @@ def get_spending_period(family_id, period):
         result += purchase
         get_plot_category(spendings_price_category)
         for category in spendings_price_category.keys():
-            purchase = f'{category}: for the amount of {spendings_price_category[category]} rubles \n\n'
+            purchase = f'{category}: for the amount of {spendings_price_category[category]} rubles\n\n'
             result += purchase
         result += "=================================\n\n"
         get_plot_members(members)
@@ -283,7 +285,7 @@ def get_spending_period(family_id, period):
             purchase = f'User {member} made purchases this {period} in the following categories:\n\n'
             result += purchase
             for category in members[member].keys():
-                purchase = f'{category} category for the amount of {members[member][category]} rubles \n \n'
+                purchase = f'{category} category for the amount of {members[member][category]} rubles\n\n'
                 result += purchase
     else:
         result = ''
@@ -423,12 +425,18 @@ async def leave_from_family(update, context):
         await context.bot.send_message(chat_id=update.effective_chat.id, reply_markup=reply_markup2,
                                        text="You are not a member of the family, therefore you cannot leave it")
 
-async def get_members(update, context):
-    family_id = db.get_family_id(update.message.chat.username)[0]
+def get_members(family_id):
     family_name = db.get_family_name(family_id)[0]
     usernames, nicknames = db.get_members(family_id)
     result = f'Family {family_name}: \n'
     for i in range(len(usernames)):
         result += f'{usernames[i]} - {nicknames[i]} \n'
+    return result
+async def post_members(update, context):
+    """
+    Handler to get family members
+    """
+    family_id = db.get_family_id(update.message.chat.username)[0]
+    result = get_members(family_id)
     reply_markup2 = ReplyKeyboardMarkup(build_menu(main_functions, 3), one_time_keyboard=True)
     await context.bot.send_message(chat_id=update.effective_chat.id, text=result, reply_markup=reply_markup2)
