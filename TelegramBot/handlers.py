@@ -118,7 +118,8 @@ async def family_password(update, context):
        Handler to get family password
     """
     password = update.message.text
-    if len(password) > 8 and ("".join(filter(str.isdigit, password)) != ""):
+    validate_password_status = validate_password()
+    if validate_password_status == 1:
         await context.bot.send_message(chat_id=update.effective_chat.id,
                                        text="We save your password. Enter your family name")
         context.user_data["family"].password = password
@@ -128,6 +129,11 @@ async def family_password(update, context):
                                        text="Password must be more than 8 characters long and must contain numbers")
         return 2
 
+def validate_password(password):
+    if len(password) > 8 and ("".join(filter(str.isdigit, password)) != ""):
+        return 1
+    else:
+        return -1
 
 async def family_name(update, context):
     """
@@ -189,20 +195,33 @@ async def save_purchase(update, context):
         Handler to save purchase
     """
     reply_markup = ReplyKeyboardMarkup(build_menu(main_functions, 3), one_time_keyboard=True)
-    try:
+    status_code = get_save_purchase_status(update.message.text)
+    if status_code == -1:
+        await context.bot.send_message(chat_id=update.effective_chat.id, reply_markup=reply_markup,
+                                       text="Price of purchase must be positive")
+        return ConversationHandler.END
+    elif status_code == 0:
         context.user_data["purchase"].price = int(update.message.text)
-        if context.user_data["purchase"].price <= 0:
-            await context.bot.send_message(chat_id=update.effective_chat.id, reply_markup=reply_markup,
-                                           text="Price of purchase must be positive")
-            return ConversationHandler.END
         db.add_purchase(context.user_data["purchase"])
         await context.bot.send_message(chat_id=update.effective_chat.id, reply_markup=reply_markup,
                                        text="Purchase successful added")
-    except ValueError:
+    else:
         await context.bot.send_message(chat_id=update.effective_chat.id, reply_markup=reply_markup,
                                        text="You must enter number")
-    finally:
-        return ConversationHandler.END
+
+def get_save_purchase_status(price):
+    # -1 -> Price of purchase must be positive
+    # 0 -> Purchase successful added
+    # -2 -> ValueError = You must enter number
+    try:
+        price = int(price)
+        if price <= 0:
+            return -1
+        else:
+            return 0
+    except ValueError:
+        return -2
+
 
 
 def build_menu(buttons, n_cols,

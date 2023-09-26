@@ -15,7 +15,7 @@ def config_bot():
     """
     Commands and configs of telegram bot
     """
-    with open("./config.json") as json_data:
+    with open("../config.json") as json_data:
         data = json.load(json_data)
 
     application = ApplicationBuilder().token(data["Token"]).build()

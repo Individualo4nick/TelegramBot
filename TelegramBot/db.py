@@ -11,8 +11,9 @@ import unittest.mock
 
 def __init__():
     pass
-
-with open("./config.json") as json_data:
+####
+print()
+with open("C:\\Users\\vladv\\PycharmProjects\\Bot\\config.json") as json_data:
     data = json.load(json_data)
 
 def connect_db():
