@@ -4,9 +4,10 @@ import TelegramBot.db
 def test_spendings_period_1(mocker):
     mocker.patch("TelegramBot.db.get_period_members", return_value=(("individualo4nick",),))
     mocker.patch("TelegramBot.db.get_spend_member", return_value=(((123,),), (('Transport',),)))
+    mocker.patch("TelegramBot.db.get_spend", return_value=(((123,),), (('Transport',),)))
     assert TelegramBot.handlers.get_spending_period(1, "Month")=='''This Month you made purchases in the following categories:\n\nTransport: for the amount of 123 rubles\n\n=================================\n\nUser individualo4nick made purchases this Month in the following categories:\n\nTransport category for the amount of 123 rubles\n\n'''
 
-def test_spendings_period_2(mocker):
+def test_spendings_period_2():
     assert TelegramBot.handlers.get_spending_period(1, "Aboba")=="Unable to view information for this period"
 
 def test_members_1(mocker):

@@ -291,6 +291,9 @@ def get_spending_period(family_id, period):
             spendings_price_category = data_conversion(spendings_category, spendings_price)
             members[unique_spendings_member[i][0]] = spendings_price_category
         spendings_price, spendings_category = db.get_spend(period, now, family_id)
+        print(spendings_price)
+        print('\n')
+        print(spendings_category)
         spendings_price_category = data_conversion(spendings_category, spendings_price)
         purchase = f'This {period} you made purchases in the following categories:\n\n'
         result += purchase
