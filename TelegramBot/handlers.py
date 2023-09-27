@@ -291,9 +291,6 @@ def get_spending_period(family_id, period):
             spendings_price_category = data_conversion(spendings_category, spendings_price)
             members[unique_spendings_member[i][0]] = spendings_price_category
         spendings_price, spendings_category = db.get_spend(period, now, family_id)
-        print(spendings_price)
-        print('\n')
-        print(spendings_category)
         spendings_price_category = data_conversion(spendings_category, spendings_price)
         purchase = f'This {period} you made purchases in the following categories:\n\n'
         result += purchase
@@ -448,11 +445,14 @@ async def leave_from_family(update, context):
                                        text="You are not a member of the family, therefore you cannot leave it")
 
 def get_members(family_id):
-    family_name = db.get_family_name(family_id)[0]
-    usernames, nicknames = db.get_members(family_id)
-    result = f'Family {family_name}: \n'
-    for i in range(len(usernames)):
-        result += f'{usernames[i]} - {nicknames[i]} \n'
+    if (isinstance(family_id, int)):
+        family_name = db.get_family_name(family_id)[0]
+        usernames, nicknames = db.get_members(family_id)
+        result = f'Family {family_name}: \n'
+        for i in range(len(usernames)):
+            result += f'{usernames[i]} - {nicknames[i]} \n'
+    else:
+        result = "You have entered incorrect data"
     return result
 async def post_members(update, context):
     """

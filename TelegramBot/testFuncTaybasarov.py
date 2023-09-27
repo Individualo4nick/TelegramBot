@@ -15,10 +15,8 @@ def test_members_1(mocker):
     mocker.patch("TelegramBot.db.get_members", return_value=(['Vitaliy'], ['individualo4nick']))
     assert TelegramBot.handlers.get_members(1) =='''Family MyFamily: \nVitaliy - individualo4nick \n'''
 
-def test_members_2(mocker):
-    mocker.patch("TelegramBot.db.get_family_name", return_value=["AnotherFamily"])
-    mocker.patch("TelegramBot.db.get_members", return_value=(['Vitaliy', 'Vlad'], ['individualo4nick', 'sinforge']))
-    assert TelegramBot.handlers.get_members(1) == '''Family AnotherFamily: \nVitaliy - individualo4nick \nVlad - sinforge \n'''
+def test_members_2():
+    assert TelegramBot.handlers.get_members("Aboba") == "You have entered incorrect data"
 
 if __name__ == "__main__":
     test_spendings_period_1()
